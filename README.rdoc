@@ -1,0 +1,5 @@
+## The first Giving API
+
+[api.charity-map.org](https://api.charity-map.org)
+
+&copy; Charity Map 2014
