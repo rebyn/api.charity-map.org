@@ -5,9 +5,13 @@ Credits
 Get credits
 ------------
 
+```shell
+curl -H 'User-Agent: YOUR_APP_TOKEN' https://api.charity-map.org/v1/credits.json?email=QUERIED_EMAIL
+```
+
 * `GET /credits.json` will return all active credits.
 
-**For MERCHANTS:**
+**For MERCHANT account:**
 
 ```json
 [
@@ -17,23 +21,24 @@ Get credits
     "to": "u2@yahoo.net",
     "amount": 500000,
     "currency": "VND",
-    "description": "The Next Generation",
-    "created_at": "2012-03-23T13:55:43-05:00",
+    "description": "Cimigo / Survey on Cocacola",
+    "created_at": "2014-03-23T13:55:43-05:00",
     "url": "https://api.charity-map.org/v1/credits/6058166321.json"
   },
   {
-    "id": 684146117,
-    "name": "Nothing here!",
-    "description": null,
-    "updated_at": "2012-03-22T16:56:51-05:00",
-    "url": "https://api.charity-map.org/v1/credits/684146117-nothing-here.json",
-    "archived": false,
-    "starred": false
+    "uuid": 1058166328,
+    "transaction_id": 2234567894,
+    "to": "u1@gmail.com",
+    "amount": 250000,
+    "currency": "VND",
+    "description": "MixUp - November giftcard",
+    "created_at": "2014-03-23T13:55:43-05:00",
+    "url": "https://api.charity-map.org/v1/credits/1058166328.json"
   }
 ]
 ```
 
-**For INDIVIDUAL:**
+**For INDIVIDUAL account:**
 
 ```json
 {
@@ -57,7 +62,7 @@ Get credits
         "email": "merchant@gmail.com",
         "name": "PiA Vietnam",
         "contact": "01 Pasteur, Saigon, Vietnam 082930198392"
-      },
+      }
     }
   ],
   "CLEARED": [
@@ -69,7 +74,17 @@ Get credits
         "email": "merchant@gmail.com",
         "name": "PiA Vietnam",
         "contact": "01 Pasteur, Saigon, Vietnam 082930198392"
-      },
+      }
+    },
+    {
+      "uuid": 1234567890,
+      "amount": 150000,
+      "currency": "VND",
+      "merchant": {
+        "email": "merchant@gmail.com",
+        "name": "PwC Vietnam",
+        "contact": "5 Mac Dinh Ky HCMC, Vietnam 082930198392"
+      }
     }
   ]
 }
@@ -78,7 +93,9 @@ Get credits
 Get credit
 -----------
 
-* `GET /credits/1.json` will return the specified credit.
+* `GET /credits/6058166321.json` will return the specified credit.
+
+Note: Only for **MERCHANT** accounts.
 
 ```json
 {
@@ -87,8 +104,8 @@ Get credit
   "to": "u2@yahoo.net",
   "amount": 500000,
   "currency": "VND",
-  "description": "The Next Generation",
-  "created_at": "2012-03-23T13:55:43-05:00",
+  "description": "MixUP - November giftcard",
+  "created_at": "2014-03-23T13:55:43-05:00",
   "break_down": {
     "unprocessed": {
       "organizations": [
@@ -121,7 +138,7 @@ Get credit
 }
 ```
 
-Create, Update, delete credit
+Create and Update Credit
 ---------------
 
-Credits are created, transfered, and cleared together with transactions. These actions are not supported.
+Credits are created, transfered and cleared together with transactions. These actions are not supported.
