@@ -74,7 +74,8 @@ You can perform up to 500 requests per 10 second period from the same IP address
 API ready for use
 -----------------
 
-* [Projects](https://github.com/37signals/bcx-api/blob/master/sections/projects.md)
+* [Transactions](https://github.com/rebyn/api.charity-map.org/blob/master/docs/transactions.md)
+* [Credits](https://github.com/rebyn/api.charity-map.org/blob/master/docs/credits.md)
 
 
 
