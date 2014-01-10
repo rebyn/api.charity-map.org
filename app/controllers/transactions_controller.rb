@@ -10,34 +10,37 @@ class TransactionsController < ActionController::API
 	end
 
 	def new
-		transaction = Transaction.new
-		transaction.amount = 200
-		transaction.created_at = Time.now.to_datetime
-		transaction.save
-		die
 	end
 
 	def create
 		@transaction = Transaction.new(params[:transaction])
-		@transaction.created_at = Time.now.to_datetime
-		if @transaction.save 
-			respond_to do |format|
-    		format.json { render json: @transaction }
+		@transaction.created_at = Time.now
+		if @transaction.save
+			token = Token.new
+			token.transaction_id = @transaction.uid
+			# expired 4 days later
+			token.expiry_date = Time.now.midnight + 4.days			
+			if token.save
+				respond_to do |format|
+    			format.json { render json: @transaction }
+  			end
   		end
   	else
-  		respond_to do |format|
-    		format.json { render json: @transaction }
-  		end
+  		# do something
 		end
 	end
 
 	def authorize
 		token_value = params[:token]
 		transaction_id = params[:transaction_id]
-		transaction = Transaction.where("id = ? AND uid = ?", transaction_id, token_value).first
-
+		transaction = Transaction.find(transaction_id)
 		if transaction
-			transaction.update_attributes(status: 'authorized')
+			token = Token.where("transaction_id = ? AND expiry_date >= ? AND status = ?", transaction.uid, DateTime.now, "new").first
+			if token
+				transaction.update_attributes(status: 'authorized')
+				token.update_attributes(status: 'used')
+			end
 		end
+
 	end
 end
