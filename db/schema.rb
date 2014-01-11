@@ -11,11 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140111051221) do
+ActiveRecord::Schema.define(version: 20140111054037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+
+  create_table "credits", force: true do |t|
+    t.string   "master_transaction_id"
+    t.float    "amount"
+    t.integer  "belongs_to"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tokens", force: true do |t|
+    t.string   "value"
+    t.string   "transaction_id"
+    t.datetime "expiry_date"
+    t.string   "status",         default: "new"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "transactions", force: true do |t|
+    t.string   "uid"
+    t.float    "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "status"
+    t.datetime "expiry_date"
+  end
 
   create_table "users", force: true do |t|
     t.string   "email"

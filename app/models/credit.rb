@@ -1,14 +1,14 @@
 # == Schema Information
-# 
+#
 # Table name: credits
 #
-# id                   				:integer          not null, primary key
-# master_tranasction_id				:string
-# amount			 								:double
-# belongs_to					 				:integer
-# status							 				:string 					{new, unprocessed, cleared}
-# created_at									:datetime
-# update_at										:datetime
+#  id                    :integer          not null, primary key
+#  master_transaction_id :string(255)
+#  amount                :float
+#  belongs_to            :integer
+#  status                :string(255)
+#  created_at            :datetime
+#  updated_at            :datetime
 #
 
 class Credit < ActiveRecord::Base
@@ -18,5 +18,6 @@ class Credit < ActiveRecord::Base
 	validates :amount, :numericality => true
 	
 	belongs_to :transaction
+  has_defaults status: "NEW"
 
 end

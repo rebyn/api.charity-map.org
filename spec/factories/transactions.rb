@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: transactions
+#
+#  id          :integer          not null, primary key
+#  uid         :string(255)
+#  amount      :float
+#  created_at  :datetime
+#  updated_at  :datetime
+#  status      :string(255)
+#  expiry_date :datetime
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do

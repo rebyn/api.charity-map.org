@@ -1,14 +1,15 @@
 # == Schema Information
 #
-# Table name: projects
+# Table name: transactions
 #
-#  id                   :integer          not null, primary key
-#  uid									:string(22)
-#  amount								:float
-#  created_at						:datetime
-#  updated_at						:datetime
-#  status								:string 					{not_authorized, authorized}
-#  expiry_date					:datetime
+#  id          :integer          not null, primary key
+#  uid         :string(255)
+#  amount      :float
+#  created_at  :datetime
+#  updated_at  :datetime
+#  status      :string(255)
+#  expiry_date :datetime
+#
 
 class Transaction < ActiveRecord::Base
 	attr_accessible :id, :uid, :amount, :created_at, :updated_at, :status
@@ -20,6 +21,7 @@ class Transaction < ActiveRecord::Base
 
 	has_one :token
 	has_many :credits
+  has_defaults status: "NotAuthorized"
 
 	private
 	def generate_uid
@@ -28,5 +30,4 @@ class Transaction < ActiveRecord::Base
       break random_uid unless Transaction.exists?(uid: random_uid)
     end
 	end
-
 end
