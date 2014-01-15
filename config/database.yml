@@ -1,0 +1,22 @@
+defaults: &defaults
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: localhost
+  user: admin
+  password: password
+
+development:
+  <<: *defaults
+  database: API_CharityMap_dev
+
+test: &test
+  <<: *defaults
+  database: API_CharityMap_test
+
+production:
+  <<: *defaults
+  database: API_CharityMap_prod
+
+cucumber:
+  <<: *test
