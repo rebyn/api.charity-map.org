@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: tokens
+#
+#  id             :integer          not null, primary key
+#  value          :string(255)
+#  transaction_id :string(255)
+#  expiry_date    :datetime
+#  status         :string(255)
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+
 class Token < ActiveRecord::Base
   attr_accessible :value, :transaction_id, :expiry_date, :status
 

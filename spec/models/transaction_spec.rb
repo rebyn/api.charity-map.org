@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: transactions
+#
+#  id              :integer          not null, primary key
+#  uid             :string(255)
+#  amount          :float
+#  status          :string(255)
+#  expiry_date     :datetime
+#  sender_email    :string(255)
+#  recipient_email :string(255)
+#  currency        :string(255)
+#  references      :text
+#  created_at      :datetime
+#  updated_at      :datetime
+#
+
 require 'spec_helper'
 
 describe Transaction do
