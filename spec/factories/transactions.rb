@@ -23,8 +23,8 @@ FactoryGirl.define do
     amount 100000
     created_at "2014-01-08 22:16:54"
     updated_at "2014-01-08 22:16:54"
-    sender_email "tu@charity-map.org"
-    recipient_email "individual@gmail.com"
+    sender_email "merchant@company.com"
+    recipient_email "cuong@individual.net"
     currency "VND"
   end
 end

@@ -88,5 +88,32 @@ describe TransactionsController do
       # test credit being transfered to cuong@individual
       Credit.where(master_transaction_id: "1234567890").last.user.should eq(@user2)
     end
+
+    it "should create a new transaction with valid params (+2 credits)" do
+      @params = {from: "cuong@individual.net", to: "charity@gmail.com", amount: 125000, currency: "VND"}
+      @user = User.create email: "cuong@individual.net"
+      @user2 = User.create email: "charity@gmail.com"
+      @user2.update_attribute :category, "SOCIALORG"
+      @transaction = FactoryGirl.create(:transaction)
+      @another_transaction = FactoryGirl.create(:transaction, uid: "1234567891", amount: 50000, sender_email: "another_merchant@company.com")
+      @user.credits.create master_transaction_id: "1234567890", amount: 100000
+      @user.credits.create master_transaction_id: "1234567891", amount: 50000
+      @before_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
+      post :index, @params
+      expect(response.status).to eq(200)
+      expect(response.body).should have_node(:from).with("cuong@individual.net")
+      expect(response.body).should have_node(:to).with("charity@gmail.com")
+      expect(response.body).should have_node(:amount).with(125000.0)
+      expect(response.body).should have_node(:currency).with("VND")
+      expect(response.body).should have_node(:status).with("NotAuthorized")
+      # test credit sum before and after
+      @after_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
+      @before_sum.should eq(@after_sum)
+      Credit.count.should eq(4) # two new Credit objects being created
+      # test credit being transfered to charity@gmail.com
+      @user2.credits.count.should eq(2)
+      @user2.credits.sum(:amount).should eq(125000)
+      @user.credits.pluck(:master_transaction_id).should eq(["1234567890", "1234567891"])
+    end
   end
 end
