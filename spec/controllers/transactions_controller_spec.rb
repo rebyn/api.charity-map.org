@@ -40,11 +40,11 @@ describe TransactionsController do
       get :index, {email: "tu@charity-map.org"}
       expect(response.status).to eq(200)
       expect(response.body).to eq([{
-        "uid" => "0123456789", "from" => "tu@charity-map.org",
+        "uid" => "1234567890", "from" => "tu@charity-map.org",
         "to" => "individual@gmail.com", "amount" => 100000.0,
         "currency" => "VND", "references" => "",
         "created_at" => "2014-01-08T22:16:54.000Z",
-        "url" => "https://api.charity-map.org/transactions/0123456789"}].to_json)
+        "url" => "https://api.charity-map.org/transactions/1234567890"}].to_json)
     end
   end
 
@@ -60,6 +60,7 @@ describe TransactionsController do
       post :index, @params
       expect(response.body).to eq({:"error" => "Not Having Enough Credit To Perform The Transaction"}.to_json)
       # :from account is sending credit to merchant or individual accounts
+      @transaction = FactoryGirl.create(:transaction)
       @user.credits.create master_transaction_id: "1234567890", amount: 100000
       post :index, @params
       expect(response.body).to eq({:"error" => "Credits Restricted To Be Sent Only to Organizational Accounts"}.to_json)
@@ -70,6 +71,7 @@ describe TransactionsController do
       @user = User.create email: "tu@charity-map.org"
       @user2 = User.create email: "cuong@individual.org"
       @user2.update_attribute :category, "SOCIALORG"
+      @transaction = FactoryGirl.create(:transaction)
       @user.credits.create master_transaction_id: "1234567890", amount: 100000
       @before_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       post :index, @params
@@ -82,8 +84,9 @@ describe TransactionsController do
       # test credit sum before and after
       @after_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       @before_sum.should eq(@after_sum)
+      Credit.count.should eq(2)
       # test credit being transfered to cuong@individual
-      Credit.where(master_transaction_id: "1234567890").first.user.should eq(@user2)
+      Credit.where(master_transaction_id: "1234567890").last.user.should eq(@user2)
     end
   end
 end

@@ -19,7 +19,7 @@
 
 FactoryGirl.define do
   factory :transaction do
-    uid "0123456789"
+    uid "1234567890"
     amount 100000
     created_at "2014-01-08 22:16:54"
     updated_at "2014-01-08 22:16:54"
