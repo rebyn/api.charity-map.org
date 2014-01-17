@@ -13,7 +13,7 @@
 
 class Credit < ActiveRecord::Base
   belongs_to :user
-  attr_accessible :master_transaction_id, :amount, :user_id
+  attr_accessible :master_transaction_id, :amount, :user_id, :status
 
   validates :master_transaction_id, :amount, :user_id, :status, presence: true
   validates :amount, :numericality => true

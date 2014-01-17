@@ -67,7 +67,7 @@ class TransactionsController < ApplicationController
           @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount)
           credit.update_attributes!(amount: 0, status: "PROCESSED")
         elsif credit.amount > @temp_amount
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount - @temp_amount)
+          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: @temp_amount)
           # PROCESSED OR UNPROCESSED ?
           credit.update_attributes!(amount: credit.amount - @temp_amount, status: "PROCESSED")          
           @is_successfully = true

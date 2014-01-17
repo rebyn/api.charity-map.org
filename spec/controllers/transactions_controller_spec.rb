@@ -113,7 +113,7 @@ describe TransactionsController do
       # test credit being transfered to charity@gmail.com
       @user2.credits.count.should eq(2)
       @user2.credits.sum(:amount).should eq(125000)
-      @user.credits.pluck(:master_transaction_id).should eq(["1234567890", "1234567891"])
+      @user.credits.pluck(:master_transaction_id).sort.should eq(["1234567890", "1234567891"])
     end
   end
 end
