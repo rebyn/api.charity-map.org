@@ -115,5 +115,34 @@ describe TransactionsController do
       @user2.credits.sum(:amount).should eq(125000)
       @user.credits.pluck(:master_transaction_id).sort.should eq(["1234567890", "1234567891"])
     end
+
+    it "should create a new transaction with valid params (+3 credits)" do
+      @params = {from: "cuong@individual.net", to: "charity@gmail.com", amount: 170000, currency: "VND"}
+      @user = User.create email: "cuong@individual.net"
+      @user2 = User.create email: "charity@gmail.com"
+      @user2.update_attribute :category, "SOCIALORG"
+      @transaction = FactoryGirl.create(:transaction)
+      @transaction_2 = FactoryGirl.create(:transaction, uid: "1234567891", amount: 50000, sender_email: "another_merchant@company.com")
+      @transaction_3 = FactoryGirl.create(:transaction, uid: "1234567892", amount: 25000, sender_email: "another_merchant@company.com")
+      @user.credits.create master_transaction_id: "1234567890", amount: 100000
+      @user.credits.create master_transaction_id: "1234567891", amount: 50000
+      @user.credits.create master_transaction_id: "1234567892", amount: 25000
+      @before_sum = Credit.where(master_transaction_id: "1234567892").sum(:amount)
+      post :index, @params
+      expect(response.status).to eq(200)
+      expect(response.body).should have_node(:from).with("cuong@individual.net")
+      expect(response.body).should have_node(:to).with("charity@gmail.com")
+      expect(response.body).should have_node(:amount).with(170000.0)
+      expect(response.body).should have_node(:currency).with("VND")
+      expect(response.body).should have_node(:status).with("NotAuthorized")
+      # test credit sum before and after
+      @after_sum = Credit.where(master_transaction_id: "1234567892").sum(:amount)
+      @before_sum.should eq(@after_sum)
+      Credit.count.should eq(6) # two new Credit objects being created
+      # test credit being transfered to charity@gmail.com
+      @user2.credits.count.should eq(3)
+      @user2.credits.sum(:amount).should eq(170000)
+      @user.credits.pluck(:master_transaction_id).sort.should eq(["1234567890", "1234567891", "1234567892"])
+    end
   end
 end
