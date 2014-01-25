@@ -7,10 +7,12 @@
 #  category   :string(255)
 #  created_at :datetime
 #  updated_at :datetime
+#  name       :string(255)
+#  contact    :string(255)
 #
 
 class User < ActiveRecord::Base
-  attr_accessible :email
+  attr_accessible :email, :name, :contact
   validates :email, :category, presence: true
   validate :user_to_belong_to_a_category
   has_defaults category: "INDIVIDUAL"

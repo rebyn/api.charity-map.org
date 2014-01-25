@@ -9,13 +9,17 @@
 #  status                :string(255)
 #  created_at            :datetime
 #  updated_at            :datetime
+#  uid                   :string(255)
+#  currency              :string(255)
 #
 
 class Credit < ActiveRecord::Base
   belongs_to :user
-  attr_accessible :master_transaction_id, :amount, :user_id, :status
+  attr_accessible :uid, :master_transaction_id, :amount, :user_id, :status, :currency
 
-  validates :master_transaction_id, :amount, :user_id, :status, presence: true
+  before_validation :generate_uid, :unless => :uid?
+
+  validates :uid, :master_transaction_id, :amount, :user_id, :status, :currency, presence: true
   validates :amount, :numericality => true
   validate :credit_to_belong_to_a_master_transaction
   
@@ -23,5 +27,22 @@ class Credit < ActiveRecord::Base
 
   def credit_to_belong_to_a_master_transaction
     errors.add(:master_transaction_id, "has to belong to a Transaction") if !Transaction.exists?(uid: master_transaction_id)
+  end
+
+  def generate_uid
+    self.uid = loop do
+      random_uid = (0..9).map{ ('0'..'9').to_a[rand(10)] }.join
+      break random_uid unless Credit.exists?(uid: random_uid)
+    end
+  end
+
+  def url
+    return "#{BASE_URI}/credits/#{self.uid}"
+  end
+
+  def merchant
+    @transaction = Transaction.find_by_uid(self.master_transaction_id)
+    @merchant = User.where("email = ?", @transaction.sender_email)
+    return @merchant
   end
 end

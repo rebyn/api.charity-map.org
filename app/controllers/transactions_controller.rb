@@ -28,7 +28,7 @@ class TransactionsController < ApplicationController
         # TODO: transaction.status == "Authorized"
         if @transaction 
           if @sender_user.category == "MERCHANT"
-            @credit = @recipient_user.credits.create(master_transaction_id: @transaction.uid, amount: params[:amount])            
+            @credit = @recipient_user.credits.create(master_transaction_id: @transaction.uid, amount: params[:amount], currency: @transaction.currency)            
           else
             @credit = create_credit_by_invidual_user(@sender_user, @recipient_user, @transaction)
           end
@@ -64,16 +64,16 @@ class TransactionsController < ApplicationController
       sender_user.credits.each do |credit|
         if credit.amount < @temp_amount
           @temp_amount = @temp_amount - credit.amount
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount)
+          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
           credit.update_attributes!(amount: 0, status: "PROCESSED")
         elsif credit.amount > @temp_amount
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: @temp_amount)
+          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: @temp_amount, currency: transaction.currency)
           # PROCESSED OR UNPROCESSED ?
           credit.update_attributes!(amount: credit.amount - @temp_amount, status: "PROCESSED")          
           @is_successfully = true
           break
-        else          
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount)
+        else
+          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
           credit.update_attributes!(amount: 0, status: "PROCESSED")          
           @is_successfully = true
           break
