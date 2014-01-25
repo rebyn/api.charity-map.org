@@ -9,6 +9,8 @@
 #  status                :string(255)
 #  created_at            :datetime
 #  updated_at            :datetime
+#  uid                   :string(255)
+#  currency              :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

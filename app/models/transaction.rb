@@ -13,6 +13,7 @@
 #  references      :text
 #  created_at      :datetime
 #  updated_at      :datetime
+#  break_down      :hstore
 #
 
 class Transaction < ActiveRecord::Base

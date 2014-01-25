@@ -13,6 +13,7 @@
 #  references      :text
 #  created_at      :datetime
 #  updated_at      :datetime
+#  break_down      :hstore
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -26,5 +27,6 @@ FactoryGirl.define do
     sender_email "merchant@company.com"
     recipient_email "cuong@individual.net"
     currency "VND"
+    break_down { {"1234567890" => 100000} }
   end
 end
