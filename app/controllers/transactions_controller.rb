@@ -1,5 +1,6 @@
 class TransactionsController < ApplicationController
   before_filter :check_app_authorization
+  include TransactionsHelper
 
   # DOC: https://github.com/rebyn/api.charity-map.org/blob/master/docs/transactions.md#get-transactions
   def index
@@ -14,74 +15,28 @@ class TransactionsController < ApplicationController
         render json: (params[:email] ? {"error" => "Email not found"} : {"error" => "Missing required params[:email]"}), status: 400
       end
     else # handle PUT/POST
-      @user = User.find_or_create_by_email params[:to]
-      @sender_user = User.find_by_email(params[:from])
-      @recipient_user = User.find_by_email(params[:to])
+      @sender = User.find_by_email(params[:from])
+      @recipient = User.find_by_email(params[:to])
       # TODO: send email when creating new User
-      @result = validate_create_transaction(params, @sender_user, @recipient_user)            
-      if @result != ""
-        render json: {"error" => @result}, status: 400
+      @valid_transaction = check_transaction_prerequisites(@sender, @recipient, params)
+      if !@valid_transaction.blank?
+        render json: { "error" => @valid_transaction }, status: 400
       else
-        @transaction = create_transaction(params, (params[:from] == @app[:email] ? 'Authorized' : 'NotAuthorized'))        
+        @transaction = create(params,
+          (params[:from] == @app[:email] ? 'Authorized' : 'NotAuthorized')
+        )
         # UserMailer.ask_to_authorize_transaction(@transaction).deliver if !@transaction.authorized?
         # TODO: send email when creating an NotAuthorized transaction
         # TODO: transaction.status == "Authorized"
-        if @transaction 
-          if @sender_user.category == "MERCHANT"
-            @credit = @recipient_user.credits.create(master_transaction_id: @transaction.uid, amount: params[:amount], currency: @transaction.currency)            
-          else
-            @credit = create_credit_by_invidual_user(@sender_user, @recipient_user, @transaction)
-          end
-          if @credit
-            respond_to do |format|
-              format.json {render(template: '/transactions/create.json.jbuilder', status: 200)}
-            end
-          else
-            render json: {"error" => "Fail to create credit"}, status: 400
-          end
-        else
-          render json: {"error" => "Fail to create transaction"}, status: 400
+        @break_down = credit_transfer(@sender, @recipient, @transaction)
+        @transaction.update_attribute(:break_down, @break_down)
+        respond_to do |format|
+          format.json {render(template: '/transactions/create.json.jbuilder', status: 200)}
         end
       end
     end
   end
 
-  def create_transaction(params, status)
-    @transaction = Transaction.create(
-      sender_email: params[:from], recipient_email: params[:to],
-      amount: params[:amount], currency: params[:currency],
-      references: params[:references]
-    )
-    @transaction.update_attribute :status, status if status == 'Authorized'
-    return @transaction
-  end
-
-  def create_credit_by_invidual_user(sender_user, recipient_user, transaction)
-    # MUST NOT REMOVE "!" in below code lines
-    @temp_amount = params[:amount].to_f
-    @is_successfully = false    
-    Credit.transaction do      
-      sender_user.credits.each do |credit|
-        if credit.amount < @temp_amount
-          @temp_amount = @temp_amount - credit.amount
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
-          credit.update_attributes!(amount: 0, status: "PROCESSED")
-        elsif credit.amount > @temp_amount
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: @temp_amount, currency: transaction.currency)
-          # PROCESSED OR UNPROCESSED ?
-          credit.update_attributes!(amount: credit.amount - @temp_amount, status: "PROCESSED")          
-          @is_successfully = true
-          break
-        else
-          @created_credit = recipient_user.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
-          credit.update_attributes!(amount: 0, status: "PROCESSED")          
-          @is_successfully = true
-          break
-        end
-      end
-    end
-    return @is_successfully
-  end
   def authorize
     token_value = params[:token]
     transaction_id = params[:transaction_id]
@@ -93,7 +48,6 @@ class TransactionsController < ApplicationController
         token.update_attributes(status: 'used')
       end
     end
-
   end
 
   def print_transactions(json, transactions, user)
@@ -109,26 +63,32 @@ class TransactionsController < ApplicationController
     end
   end
 
-  def validate_create_transaction(params, sender_user, recipient_user)
-    if !sender_user
-      return "Sender Email Not Found"
+  def check_transaction_prerequisites(sender, recipient, params)
+    message = []
+    message.push("Required params[:currency].") if !params[:currency]
+    message.push("Sender Email Not Found.") if !sender
+    message.push("Recipient Email Not Found.") if !recipient
+    if sender && !sender.is_merchant? && sender.credits.unprocessed.sum(:amount) < params[:amount].to_f
+      message.push("Not Having Enough Credit To Perform The Transaction.")
+    elsif sender && recipient
+      if recipient.is_merchant? || (!sender.is_merchant? && recipient.is_individual?)
+        message.push("Credits Restricted To Be Sent Only to Organizational Accounts.")
+      end
     end
-    if !recipient_user
-      return "Recipient Email Not Found"
-    end 
-    if sender_user.category != "MERCHANT" && Credit.where(:user_id => sender_user.id, :status => "UNPROCESSED").sum(:amount) < params[:amount].to_f
-      return "Not Having Enough Credit To Perform The Transaction"
-    end
-    if recipient_user.category == "MERCHANT" || (sender_user.category != "MERCHANT" && recipient_user.category == "INDIVIDUAL")
-      return "Credits Restricted To Be Sent Only to Organizational Accounts"
-    end
-    if !params[:currency] || params[:currency] == ''
-      return "Credits Need To Be Set The Currency"
-    end
-    return ""
+    return message.join(" ")
   end
 
   private
+    def create(params, status)
+      @transaction = Transaction.create(
+        sender_email: params[:from], recipient_email: params[:to],
+        amount: params[:amount], currency: params[:currency],
+        references: params[:references]
+      )
+      @transaction.update_attribute(:status, status) if (status == 'Authorized')
+      return @transaction
+    end
+
     def check_app_authorization
       true
       @app = Hash.new({:token => "ABCDEF", :email => "tu@merchant.com"})

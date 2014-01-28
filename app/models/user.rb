@@ -23,4 +23,12 @@ class User < ActiveRecord::Base
     errors.add(:category, "has to be either Merchant, Individual or SocialOrg") if
       ["MERCHANT", "INDIVIDUAL", "SOCIALORG"].index(category) == nil
   end
+
+  def is_merchant?
+    category == "MERCHANT" ? true : false
+  end
+
+  def is_individual?
+    category == "INDIVIDUAL" ? true : false
+  end
 end

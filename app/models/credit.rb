@@ -14,6 +14,7 @@
 #
 
 class Credit < ActiveRecord::Base
+  scope :unprocessed, -> { where(status: "UNPROCESSED") }
   belongs_to :user
   attr_accessible :uid, :master_transaction_id, :amount, :user_id, :status, :currency
 
