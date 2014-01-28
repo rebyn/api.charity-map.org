@@ -1,14 +1,16 @@
 CharitIo::Application.routes.draw do
-  resources :transactions, defaults: {format: :json} do
-    get 'index'
-    post 'index'
-    get 'new'
-    get 'authorize'
-    post 'create'    
-  end
+  namespace :v1, defaults: {format: :json} do
+    resources :transactions do
+      get 'index'
+      post 'index'
+      get 'new'
+      get 'authorize'
+      post 'create'
+    end
 
-  resources :credits, defaults: {format: :json} do
-    get 'index'
+    resources :credits do
+      get 'index'
+    end
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

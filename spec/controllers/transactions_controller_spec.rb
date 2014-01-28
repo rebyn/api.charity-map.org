@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TransactionsController do
+describe V1::TransactionsController do
   before :each do
     request.env["HTTP_ACCEPT"] = 'application/json'
     request.env["HTTPS"] = 'on'

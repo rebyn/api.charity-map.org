@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CreditsController do
+describe V1::CreditsController do
 	before :each do
     request.env["HTTP_ACCEPT"] = 'application/json'
     request.env["HTTPS"] = 'on'

@@ -9,8 +9,8 @@ describe "The API" do
   end
 
   it "hits the right controller/action" do
-    {:get => "/transactions"}.should route_to(
-     :controller => "transactions",
+    {:get => "/v1/transactions"}.should route_to(
+     :controller => "v1/transactions",
      :action => "index",
      :format => :json
     )
