@@ -3,6 +3,7 @@ require 'spec_helper'
 describe CreditsController do
 	before :each do
     request.env["HTTP_ACCEPT"] = 'application/json'
+    request.env["HTTPS"] = 'on'
   end
 
   describe "GET index" do
