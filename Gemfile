@@ -47,6 +47,9 @@ end
 # To use Jbuilder templates for JSON
 gem 'jbuilder'
 
+# To use HAML templates for views / mailers
+gem 'haml-rails'
+
 # Use unicorn as the app server
 # gem 'unicorn'
 
