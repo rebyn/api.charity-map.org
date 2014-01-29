@@ -29,10 +29,10 @@ describe V1::CreditsController do
     	@credit.update_attribute :uid, "0987654321"
     	get :index, @params
     	expect(response.status).to eq(200)
-    	expect(response.body).should have_node(:uuid).with("0987654321")
-    	expect(response.body).should have_node(:email).with("tu@charity-map.org")
-    	expect(response.body).should have_node(:amount).with(100000)
-    	expect(response.body).should have_node(:currency).with("VND")
+    	expect(response.body).to have_node(:uuid).with("0987654321")
+    	expect(response.body).to have_node(:email).with("tu@charity-map.org")
+    	expect(response.body).to have_node(:amount).with(100000)
+    	expect(response.body).to have_node(:currency).with("VND")
     end
 
     it "should return credits for organization" do
@@ -48,16 +48,16 @@ describe V1::CreditsController do
     	@credit.update_attribute :uid, "0987654321"
     	get :index, @params
     	expect(response.status).to eq(200)
-    	expect(response.body).should have_node(:UNPROCESSED)
-    	expect(response.body).should have_node(:CLEARED)
-    	expect(response.body).should have_node(:uuid).with("0987654321")
-    	expect(response.body).should have_node(:amount).with(40000)
-    	expect(response.body).should have_node(:uuid).with("0007654321")
-    	expect(response.body).should have_node(:amount).with(60000)
-    	expect(response.body).should have_node(:email).with("merchant@company.com")
-    	expect(response.body).should have_node(:name).with("Merchant Corp")
-    	expect(response.body).should have_node(:contact).with("227 Nguyen Van Cu, TP.HCM")
-    	expect(response.body).should have_node(:currency).with("VND")
+    	expect(response.body).to have_node(:UNPROCESSED)
+    	expect(response.body).to have_node(:CLEARED)
+    	expect(response.body).to have_node(:uuid).with("0987654321")
+    	expect(response.body).to have_node(:amount).with(40000)
+    	expect(response.body).to have_node(:uuid).with("0007654321")
+    	expect(response.body).to have_node(:amount).with(60000)
+    	expect(response.body).to have_node(:email).with("merchant@company.com")
+    	expect(response.body).to have_node(:name).with("Merchant Corp")
+    	expect(response.body).to have_node(:contact).with("227 Nguyen Van Cu, TP.HCM")
+    	expect(response.body).to have_node(:currency).with("VND")
     end
   end
 end

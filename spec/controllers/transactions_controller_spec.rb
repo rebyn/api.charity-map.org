@@ -98,12 +98,12 @@ describe V1::TransactionsController do
       @user.credits.create master_transaction_id: "1234567890", amount: 100000, currency: "VND"
       @before_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       post :index, @params
-      expect(response.body).should have_node(:from).with("merchant@company.com")
+      expect(response.body).to have_node(:from).with("merchant@company.com")
       expect(response.status).to eq(200)
-      expect(response.body).should have_node(:to).with("cuong@individual.net")
-      expect(response.body).should have_node(:amount).with(100000.0)
-      expect(response.body).should have_node(:currency).with("VND")
-      expect(response.body).should have_node(:status).with("Authorized")
+      expect(response.body).to have_node(:to).with("cuong@individual.net")
+      expect(response.body).to have_node(:amount).with(100000.0)
+      expect(response.body).to have_node(:currency).with("VND")
+      expect(response.body).to have_node(:status).with("Authorized")
       # test credit sum before and after
       @after_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       @before_sum.should eq(@after_sum)
@@ -123,12 +123,12 @@ describe V1::TransactionsController do
       @user.credits.create master_transaction_id: "1234567891", amount: 50000, currency: "VND"
       @before_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       post :index, @params
-      expect(response.body).should have_node(:from).with("cuong@individual.net")
+      expect(response.body).to have_node(:from).with("cuong@individual.net")
       expect(response.status).to eq(200)
-      expect(response.body).should have_node(:to).with("charity@gmail.com")
-      expect(response.body).should have_node(:amount).with(125000.0)
-      expect(response.body).should have_node(:currency).with("VND")
-      expect(response.body).should have_node(:status).with("NotAuthorized")
+      expect(response.body).to have_node(:to).with("charity@gmail.com")
+      expect(response.body).to have_node(:amount).with(125000.0)
+      expect(response.body).to have_node(:currency).with("VND")
+      expect(response.body).to have_node(:status).with("NotAuthorized")
       # test credit sum before and after
       @after_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       @before_sum.should eq(@after_sum)
@@ -152,12 +152,12 @@ describe V1::TransactionsController do
       @user.credits.create master_transaction_id: "1234567892", amount: 25000, currency: "VND"
       @before_sum = Credit.where(master_transaction_id: "1234567892").sum(:amount)
       post :index, @params
-      expect(response.body).should have_node(:from).with("cuong@individual.net")
+      expect(response.body).to have_node(:from).with("cuong@individual.net")
       expect(response.status).to eq(200)
-      expect(response.body).should have_node(:to).with("charity@gmail.com")
-      expect(response.body).should have_node(:amount).with(170000.0)
-      expect(response.body).should have_node(:currency).with("VND")
-      expect(response.body).should have_node(:status).with("NotAuthorized")
+      expect(response.body).to have_node(:to).with("charity@gmail.com")
+      expect(response.body).to have_node(:amount).with(170000.0)
+      expect(response.body).to have_node(:currency).with("VND")
+      expect(response.body).to have_node(:status).with("NotAuthorized")
       # test credit sum before and after
       @after_sum = Credit.where(master_transaction_id: "1234567892").sum(:amount)
       @before_sum.should eq(@after_sum)
