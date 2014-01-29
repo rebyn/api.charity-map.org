@@ -1,6 +1,6 @@
 module V1
   class TransactionsController < ApplicationController
-    before_filter :check_app_authorization
+    before_filter :validate_application
     include TransactionsHelper
 
     # DOC: https://github.com/rebyn/api.charity-map.org/blob/master/docs/transactions.md#get-transactions
@@ -30,9 +30,9 @@ module V1
           # TODO: send email when creating an NotAuthorized transaction
           # TODO: after authorizing, transfer credits
           # TODO: if @transaction.status == "Authorized"          
-          @break_down = credit_transfer(@sender, @recipient, @transaction)          
+          @break_down = credit_transfer(@sender, @recipient, @transaction)
           @transaction.break_down = @break_down
-          @transaction.save!          
+          @transaction.save!
           respond_to do |format|
             format.json {render(template: 'v1/transactions/create.json.jbuilder', status: 200)}
           end
@@ -53,53 +53,18 @@ module V1
       end
     end
 
-    def print_transactions(json, transactions, user)
-      json.array!(transactions) do |transaction|
-        json.uid transaction.uid
-        json.from transaction.sender_email
-        json.to transaction.recipient_email
-        json.amount transaction.amount
-        json.currency transaction.currency
-        json.description transaction.references
-        json.(transaction, :created_at)
-        json.url transaction.url              
-      end
-    end
-
-    def check_transaction_prerequisites(sender, recipient, params)
-      message = []
-      message.push("Required params[:currency].") if !params[:currency]
-      message.push("Sender Email Not Found.") if !sender
-      message.push("Recipient Email Not Found.") if !recipient
-      if sender && !sender.is_merchant? && sender.credits.unprocessed.sum(:amount) < params[:amount].to_f
-        message.push("Not Having Enough Credit To Perform The Transaction.")
-      elsif sender && recipient
-        if recipient.is_merchant? || (!sender.is_merchant? && recipient.is_individual?)
-          message.push("Credits Restricted To Be Sent Only to Organizational Accounts.")
-        end
-      end
-      return message.join(" ")
-    end
-
     def show
-      @message = []      
-      if params[:id]
-        @transaction = Transaction.find_by_uid(params[:id])
-        @user = User.find_by_email(@app[:email])
-        @message.push("Transaction does not belong to you.") if @app[:email] != @transaction.sender_email
+      if !params[:uid]
+        render json: { error: "Required params[:id]." }, status: 400
+      else
+        @transaction = Transaction.find_by_uid(params[:uid])
+        if !@transaction
+          render json: { error: "Transaction not found." }, status: 400
+        else
+          @transactions = Transaction.where("break_down ? :key", :key => @transaction.uid)
+          respond_to { |format| format.json {render(template: 'v1/transactions/show.json.jbuilder', status: 200)} }
+        end
       end            
-      @message.push("Required params[:id].") if !params[:id]
-      @message.push("There was no transaction.") if !@transaction
-      @message.push("Only for MERCHANT and ORGANIZATION account.") if !@user || @user.category == "INDIVIDUAL"      
-      @message.join(" ")
-      if !@message.blank?
-        render json: {"error" => @message}, status: 400
-        return false        
-      end
-      @transactions = Transaction.where("break_down ? '#{@transaction.uid}'")
-      respond_to do |format|
-        format.json {render(template: 'v1/transactions/detail.json.jbuilder', status: 200)}
-      end
     end
 
     private
@@ -113,7 +78,7 @@ module V1
         return @transaction
       end
 
-      def check_app_authorization
+      def validate_application
         true
         @app = {:token => "ABCDEF", :email => "merchant@company.com"}
       end

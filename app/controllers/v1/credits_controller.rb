@@ -1,6 +1,6 @@
 module V1
   class CreditsController < ApplicationController
-  	before_filter :check_app_authorization
+  	before_filter :validate_application
 
   	def index
   		if (!request.post? && !request.put?)
@@ -45,7 +45,7 @@ module V1
   	# end
 
   	private
-      def check_app_authorization
+      def validate_application
         true
         @app = Hash.new({:token => "ABCDEF", :email => "tu@merchant.com"})
       end

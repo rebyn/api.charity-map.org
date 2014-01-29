@@ -8,10 +8,25 @@ describe "The API" do
     )
   end
 
-  it "hits the right controller/action" do
+  it "hits the right Transaction controller/action" do
     {:get => "/v1/transactions"}.should route_to(
      :controller => "v1/transactions",
      :action => "index",
+     :format => :json
+    )
+
+    {:post => "/v1/transactions"}.should route_to(
+     :controller => "v1/transactions",
+     :action => "index",
+     :format => :json
+    )
+  end
+
+  it "fetchs for a specific transaction" do
+    {:get => "/v1/transactions/123456"}.should route_to(
+     :controller => "v1/transactions",
+     :action => "show",
+     :uid => "123456",
      :format => :json
     )
   end

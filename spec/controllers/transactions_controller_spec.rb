@@ -56,11 +56,12 @@ describe V1::TransactionsController do
       user = FactoryGirl.create(:user)
       transaction = FactoryGirl.create(:transaction)
       user.update_attribute :category, "SOCIALORG"
-      get :show, {id: "1234567890"}
+      get :show, {uid: "1234567890"}
       expect(response.body).to eq([{
         "uid" => "1234567890", "from" => "merchant@company.com",
         "to" => "cuong@individual.net", "amount" => 100000.0,
         "currency" => "VND", "references" => "", "status" => "NotAuthorized",
+        "break_down" => {"1234567890" => "100000"},
         "created_at" => "2014-01-08T22:16:54.000Z"}].to_json)
       expect(response.status).to eq(200)
     end
@@ -102,7 +103,7 @@ describe V1::TransactionsController do
       expect(response.body).should have_node(:to).with("cuong@individual.net")
       expect(response.body).should have_node(:amount).with(100000.0)
       expect(response.body).should have_node(:currency).with("VND")
-      expect(response.body).should have_node(:status).with("NotAuthorized")
+      expect(response.body).should have_node(:status).with("Authorized")
       # test credit sum before and after
       @after_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
       @before_sum.should eq(@after_sum)

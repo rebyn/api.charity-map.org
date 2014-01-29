@@ -1,6 +1,4 @@
-if @transactions.empty?
-  json.message "Transactions Not Found"
-else
+unless @transactions.empty?
   json.array! @transactions do |transaction|
     json.uid transaction.uid
     json.from transaction.sender_email
@@ -9,6 +7,7 @@ else
     json.currency transaction.currency
     json.references transaction.references
     json.status transaction.status
-    json.(transaction, :created_at)        
+    json.break_down transaction.break_down
+    json.(transaction, :created_at)
   end
 end

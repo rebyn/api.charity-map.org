@@ -1,14 +1,11 @@
 CharitIo::Application.routes.draw do
   namespace :v1, defaults: {format: :json} do
-    resources :transactions do
-      get 'index'
-      post 'index'
-      get 'new'
-      get 'authorize'
-      post 'create'
-    end
-    
-    get '/transactions/:uid', to: 'transactions#show'
+    match 'transactions', to: 'transactions#index', via: :all
+    get 'transactions/index'
+    post 'transactions/index'
+    get 'transactions/authorize'
+    get 'transactions/show'
+    get 'transactions/:uid', to: 'transactions#show'
 
     resources :credits do
       get 'index'
