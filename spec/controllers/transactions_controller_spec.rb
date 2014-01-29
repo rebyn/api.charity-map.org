@@ -51,6 +51,19 @@ describe V1::TransactionsController do
         "url" => "https://api.charity-map.org/transactions/1234567890"}].to_json)
       expect(response.status).to eq(200)
     end
+
+    it "should show transaction detail" do
+      user = FactoryGirl.create(:user)
+      transaction = FactoryGirl.create(:transaction)
+      user.update_attribute :category, "SOCIALORG"
+      get :show, {id: "1234567890"}
+      expect(response.body).to eq([{
+        "uid" => "1234567890", "from" => "merchant@company.com",
+        "to" => "cuong@individual.net", "amount" => 100000.0,
+        "currency" => "VND", "references" => "", "status" => "NotAuthorized",
+        "created_at" => "2014-01-08T22:16:54.000Z"}].to_json)
+      expect(response.status).to eq(200)
+    end
   end
 
   describe "PUT/POST index" do

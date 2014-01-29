@@ -7,6 +7,8 @@ CharitIo::Application.routes.draw do
       get 'authorize'
       post 'create'
     end
+    
+    get '/transactions/:uid', to: 'transactions#show'
 
     resources :credits do
       get 'index'

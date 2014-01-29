@@ -28,9 +28,11 @@ module V1
           )
           # UserMailer.ask_to_authorize_transaction(@transaction).deliver if !@transaction.authorized?
           # TODO: send email when creating an NotAuthorized transaction
-          # TODO: transaction.status == "Authorized"
-          @break_down = credit_transfer(@sender, @recipient, @transaction)
-          @transaction.update_attribute(:break_down, @break_down)
+          # TODO: after authorizing, transfer credits
+          # TODO: if @transaction.status == "Authorized"          
+          @break_down = credit_transfer(@sender, @recipient, @transaction)          
+          @transaction.break_down = @break_down
+          @transaction.save!          
           respond_to do |format|
             format.json {render(template: 'v1/transactions/create.json.jbuilder', status: 200)}
           end
@@ -79,6 +81,27 @@ module V1
       return message.join(" ")
     end
 
+    def show
+      @message = []      
+      if params[:id]
+        @transaction = Transaction.find_by_uid(params[:id])
+        @user = User.find_by_email(@app[:email])
+        @message.push("Transaction does not belong to you.") if @app[:email] != @transaction.sender_email
+      end            
+      @message.push("Required params[:id].") if !params[:id]
+      @message.push("There was no transaction.") if !@transaction
+      @message.push("Only for MERCHANT and ORGANIZATION account.") if !@user || @user.category == "INDIVIDUAL"      
+      @message.join(" ")
+      if !@message.blank?
+        render json: {"error" => @message}, status: 400
+        return false        
+      end
+      @transactions = Transaction.where("break_down ? '#{@transaction.uid}'")
+      respond_to do |format|
+        format.json {render(template: 'v1/transactions/detail.json.jbuilder', status: 200)}
+      end
+    end
+
     private
       def create(params, status)
         @transaction = Transaction.create(
@@ -92,7 +115,7 @@ module V1
 
       def check_app_authorization
         true
-        @app = Hash.new({:token => "ABCDEF", :email => "tu@merchant.com"})
+        @app = {:token => "ABCDEF", :email => "merchant@company.com"}
       end
   end
 end
