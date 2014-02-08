@@ -20,7 +20,7 @@ module V1
             format.json {render(template: @template, status: 200)}
           end
         else
-          render json: (params[:email] ? {"error" => "Email not found"} : {"error" => "Missing required params[:email]"}), status: 400
+          render json: (params[:email] ? {error: "Email not found"} : {error: "Missing required params[:email]"}), status: 400
         end
   		end
   	end
@@ -54,7 +54,8 @@ module V1
         render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
       end
     end
-  	# def show
+  	
+    # def show
   	# 	@user = User.find_by_email(@app.email)
   	# 	if @user && @user.category == "MERCHANT" && params[:id]
   	# 		@credit = Credit.find_by_uid(params[:id])
@@ -63,11 +64,11 @@ module V1
   	#     end
   	#   else
   	#   	if @user
-  	#   		render json: {"error" => "Only for MERCHANT accounts"}, status: 400
+  	#   		render json: {error: "Only for MERCHANT accounts"}, status: 400
   	#   	elsif !params[:id]
-  	#   		render json: {"error" => "UUID must not be blank"}, status: 400
+  	#   		render json: {error: "UUID must not be blank"}, status: 400
   	#   	else
-   #      	render json: (params[:email] ? {"error" => "Email not found"} : {"error" => "Missing required params[:email]"}), status: 400
+   #      	render json: (params[:email] ? {error: "Email not found"} : {error: "Missing required params[:email]"}), status: 400
    #    	end
    #    end
   	# 	end
