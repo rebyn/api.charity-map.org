@@ -68,7 +68,6 @@ describe V1::CreditsController do
       @credit.update_attribute :uid, "0987654321"
       get :unprocessed, @params
       expect(response.status).to eq(200)
-      expect(response.body).to have_node(:UNPROCESSED)
       expect(response.body).to have_node(:uuid).with("0987654321")
       expect(response.body).to have_node(:amount).with(100000)
       expect(response.body).to have_node(:currency).with("VND")
@@ -84,7 +83,6 @@ describe V1::CreditsController do
       @credit.update_attributes uid: "0987654321", status: "CLEARED"
       get :cleared, @params
       expect(response.status).to eq(200)
-      expect(response.body).to have_node(:CLEARED)
       expect(response.body).to have_node(:uuid).with("0987654321")
       expect(response.body).to have_node(:amount).with(100000)
       expect(response.body).to have_node(:currency).with("VND")

@@ -10,8 +10,8 @@ CharitIo::Application.routes.draw do
     post 'users/create'
 
     resources :credits do
-      get 'unprocessed', on: :collection
-      get 'cleared', on: :collection
+      get 'unprocessed/:master_transaction_id', to: 'credits#unprocessed', on: :collection
+      get 'cleared/:master_transaction_id', to: 'credits#cleared', on: :collection
     end
   end
   # The priority is based upon order of creation: first created -> highest priority.

@@ -1,4 +1,4 @@
-json.UNPROCESSED @credits do |credit|
+json.array! @credits do |credit|
     json.uuid credit.uid
     json.amount credit.amount
     json.currency credit.currency

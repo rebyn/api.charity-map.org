@@ -25,25 +25,33 @@ module V1
   		end
   	end
 
-    def unprocessed
-      @credits = Credit.where("status = ? AND master_transaction_id = ?", "UNPROCESSED", params[:master_transaction_id])
-      if params[:master_transaction_id] && @credits
+    def unprocessed      
+      if params[:master_transaction_id]
+        @credits = Credit.where("status = ? AND master_transaction_id = ?", "UNPROCESSED", params[:master_transaction_id])
         respond_to do |format|
-            format.json {render(template: "v1/credits/unprocessed_credits", status: 200)}
+          if @credits
+            format.json {render(template: "v1/credits/unprocessed", status: 200)}
+          else
+            render json: {error: "No associated credits"}, status: 400
+          end
         end
       else
-        render json: (params[:master_transaction_id] ? {"error" => "Credits not found"} : {"error" => "Missing required params[:master_transaction_id]"}), status: 400
+        render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
       end
     end
 
     def cleared
-      @credits = Credit.where("status = ? AND master_transaction_id = ?", "CLEARED", params[:master_transaction_id])
-      if params[:master_transaction_id] && @credits
+      if params[:master_transaction_id]
+        @credits = Credit.where("status = ? AND master_transaction_id = ?", "CLEARED", params[:master_transaction_id])
         respond_to do |format|
-            format.json {render(template: "v1/credits/cleared_credits", status: 200)}
+          if @credits
+            format.json {render(template: "v1/credits/cleared", status: 200)}
+          else
+            render json: {error: "No associated credits"}, status: 400
+          end
         end
       else
-        render json: (params[:master_transaction_id] ? {"error" => "Credits not found"} : {"error" => "Missing required params[:master_transaction_id]"}), status: 400
+        render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
       end
     end
   	# def show
