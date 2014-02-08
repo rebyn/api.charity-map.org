@@ -6,9 +6,13 @@ CharitIo::Application.routes.draw do
     get 'transactions/authorize'
     get 'transactions/show'
     get 'transactions/:uid', to: 'transactions#show'
+    get 'credits/unprocessed'
+    get 'credits/cleared'
+
+    post 'users/create'
 
     resources :credits do
-      get 'index'
+      get 'index'      
     end
   end
   # The priority is based upon order of creation: first created -> highest priority.

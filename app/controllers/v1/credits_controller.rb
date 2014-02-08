@@ -25,6 +25,27 @@ module V1
   		end
   	end
 
+    def unprocessed
+      @credits = Credit.where("status = ? AND master_transaction_id = ?", "UNPROCESSED", params[:master_transaction_id])
+      if params[:master_transaction_id] && @credits
+        respond_to do |format|
+            format.json {render(template: "v1/credits/unprocessed_credits", status: 200)}
+        end
+      else
+        render json: (params[:master_transaction_id] ? {"error" => "Credits not found"} : {"error" => "Missing required params[:master_transaction_id]"}), status: 400
+      end
+    end
+
+    def cleared
+      @credits = Credit.where("status = ? AND master_transaction_id = ?", "CLEARED", params[:master_transaction_id])
+      if params[:master_transaction_id] && @credits
+        respond_to do |format|
+            format.json {render(template: "v1/credits/cleared_credits", status: 200)}
+        end
+      else
+        render json: (params[:master_transaction_id] ? {"error" => "Credits not found"} : {"error" => "Missing required params[:master_transaction_id]"}), status: 400
+      end
+    end
   	# def show
   	# 	@user = User.find_by_email(@app.email)
   	# 	if @user && @user.category == "MERCHANT" && params[:id]

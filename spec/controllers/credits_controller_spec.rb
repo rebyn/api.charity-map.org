@@ -59,5 +59,37 @@ describe V1::CreditsController do
     	expect(response.body).to have_node(:contact).with("227 Nguyen Van Cu, TP.HCM")
     	expect(response.body).to have_node(:currency).with("VND")
     end
+
+    it "should return unprocessed credits" do
+      @params = {master_transaction_id: "1234567890"}
+      @user = User.create email: "tu@charity-map.org"
+      @transaction = FactoryGirl.create(:transaction)
+      @credit = @user.credits.create master_transaction_id: "1234567890", amount: 100000, currency: "VND"
+      @credit.update_attribute :uid, "0987654321"
+      get :unprocessed, @params
+      expect(response.status).to eq(200)
+      expect(response.body).to have_node(:UNPROCESSED)
+      expect(response.body).to have_node(:uuid).with("0987654321")
+      expect(response.body).to have_node(:amount).with(100000)
+      expect(response.body).to have_node(:currency).with("VND")
+      expect(response.body).to have_node(:status).with("UNPROCESSED")
+      expect(response.body).to have_node(:created_at)
+    end
+
+    it "should return cleared credits" do
+      @params = {master_transaction_id: "1234567890"}
+      @user = User.create email: "tu@charity-map.org"
+      @transaction = FactoryGirl.create(:transaction)
+      @credit = @user.credits.create master_transaction_id: "1234567890", amount: 100000, currency: "VND"
+      @credit.update_attributes uid: "0987654321", status: "CLEARED"
+      get :cleared, @params
+      expect(response.status).to eq(200)
+      expect(response.body).to have_node(:CLEARED)
+      expect(response.body).to have_node(:uuid).with("0987654321")
+      expect(response.body).to have_node(:amount).with(100000)
+      expect(response.body).to have_node(:currency).with("VND")
+      expect(response.body).to have_node(:status).with("CLEARED")
+      expect(response.body).to have_node(:created_at)
+    end
   end
 end

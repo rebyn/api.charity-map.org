@@ -12,12 +12,15 @@
 #
 
 class User < ActiveRecord::Base
-  attr_accessible :email, :name, :contact
+  attr_accessible :email, :name, :contact, :category
   validates :email, :category, presence: true
   validate :user_to_belong_to_a_category
   has_defaults category: "INDIVIDUAL"
 
+  after_create :generate_auth_token
+
   has_many :credits
+  has_one :auth_token
 
   def user_to_belong_to_a_category
     errors.add(:category, "has to be either Merchant, Individual or SocialOrg") if
@@ -30,5 +33,11 @@ class User < ActiveRecord::Base
 
   def is_individual?
     category == "INDIVIDUAL" ? true : false
+  end
+
+  def generate_auth_token
+    if !self.auth_token && self.category == "MERCHANT"
+      self.create_auth_token expiry_date: (Time.now + 90.days)
+    end
   end
 end
