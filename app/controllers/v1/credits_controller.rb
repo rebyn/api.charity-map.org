@@ -1,6 +1,7 @@
 module V1
   class CreditsController < ApplicationController
   	before_filter :validate_application
+    skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
   	def index
   		if (!request.post? && !request.put?)
