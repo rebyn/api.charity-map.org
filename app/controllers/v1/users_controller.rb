@@ -4,15 +4,15 @@ module V1
 
   	def create
       if params && params[:email] && params[:category]
-        @user = User.create(email: params[:email], category: params[:category])
-        if @user
-          # TODO: UserMailer.send_auth_token(@user)
-          render json: { "auth_token" => @user.auth_token.value }, status: 200 
+        @user = User.new(email: params[:email], category: params[:category])
+        if @user.save
+          UserMailer.send_auth_token(@user).deliver
+          render json: { auth_token: @user.auth_token.value }, status: 200 
         else
-          render json: { "error" => "Cannot create user" }, status: 400
+          render json: { error: @user.errors.full_messages.join(" ") }, status: 400
         end
       else
-        render json: { "error" => "Cannot create user" }, status: 400
+        render json: { error: "Missing required params" }, status: 400
       end
     end
 

@@ -13,15 +13,23 @@ describe V1::UsersController do
       it "should create a user and returning auth token" do
       	@params = {email: "merchant@company.com", category: "MERCHANT"}
         post :create, @params
+        ActionMailer::Base.deliveries.last.to.should == ["merchant@company.com"]
         expect(response.status).to eq(200)
         expect(response.body).to have_node(:auth_token)
       end
 
-      it "should not create a user with invalid params" do
+      it "should not create a user with missing params" do
       	@params = {category: "MERCHANT"}
         post :create, @params
         expect(response.status).to eq(400)
-        expect(response.body).to eq({:"error" => "Cannot create user"}.to_json)
+        expect(response.body).to eq({:"error" => "Missing required params"}.to_json)
+      end
+
+      it "should not create a user with invalid email" do
+        @params = {category: "MERCHANT", email: "abc@invalid_email"}
+        post :create, @params
+        expect(response.status).to eq(400)
+        expect(response.body).to eq({:"error" => "Email is invalid"}.to_json)
       end
     end
   end

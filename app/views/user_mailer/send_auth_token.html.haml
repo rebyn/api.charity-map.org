@@ -1,0 +1,8 @@
+%p Chào #{@user.email},
+
+%p Tài khỏan của bạn vừa được thêm token mới: 
+
+%blockquote <b>#{@user.auth_token.value}</b> 
+
+%p
+	%a{:href => "http://www.charity-map.org/users/settings?utm_campaign=APITokenEmail&utm_mean=email&utm_medium=link"} www.charity-map.org

@@ -4,10 +4,10 @@ module TransactionsHelper
     message.push("Required params[:currency].") if !params[:currency]
     message.push("Sender Email Not Found.") if !sender
     message.push("Recipient Email Not Found.") if !recipient
-    if sender && !sender.is_merchant? && sender.credits.unprocessed.sum(:amount) < params[:amount].to_f
+    if sender && !sender.is?("MERCHANT") && sender.credits.unprocessed.sum(:amount) < params[:amount].to_f
       message.push("Not Having Enough Credit To Perform The Transaction.")
     elsif sender && recipient
-      if recipient.is_merchant? || (!sender.is_merchant? && recipient.is_individual?)
+      if recipient.is?("MERCHANT") || (!sender.is?("MERCHANT") && recipient.is?("INDIVIDUAL"))
         message.push("Credits Restricted To Be Sent Only to Organizational Accounts.")
       end
     end
@@ -16,7 +16,7 @@ module TransactionsHelper
   
   def credit_transfer(sender, recipient, transaction)
     @break_down, @sender, @recipient, @transaction = {}, sender, recipient, transaction
-    if @sender.is_merchant?
+    if @sender.is?("MERCHANT")
       @recipient.credits.create(master_transaction_id: @transaction.uid, amount: @transaction.amount, currency: @transaction.currency)            
       @break_down.push({ @transaction.uid.to_sym => @transaction.amount })
     else

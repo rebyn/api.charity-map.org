@@ -14,6 +14,7 @@
 class User < ActiveRecord::Base
   attr_accessible :email, :name, :contact, :category
   validates :email, :category, presence: true
+  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
   validate :user_to_belong_to_a_category
   has_defaults category: "INDIVIDUAL"
 
@@ -27,17 +28,11 @@ class User < ActiveRecord::Base
       ["MERCHANT", "INDIVIDUAL", "SOCIALORG"].index(category) == nil
   end
 
-  def is_merchant?
-    category == "MERCHANT" ? true : false
-  end
-
-  def is_individual?
-    category == "INDIVIDUAL" ? true : false
+  def is?(cat)
+    self.category == cat ? true : false
   end
 
   def generate_auth_token
-    if !self.auth_token && self.category == "MERCHANT"
-      self.create_auth_token expiry_date: (Time.now + 90.days)
-    end
+    self.create_auth_token if !self.auth_token
   end
 end

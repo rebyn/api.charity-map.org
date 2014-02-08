@@ -2,13 +2,12 @@
 #
 # Table name: auth_tokens
 #
-#  id           :integer          not null, primary key
-#  value        :string(255)
-#  status       :string(255)
-#  user_id      :integer
-#  created_at   :datetime
-#  updated_at   :datetime
-#  expirty_date :date
+#  id         :integer          not null, primary key
+#  value      :string(255)
+#  status     :string(255)
+#  user_id    :integer
+#  created_at :datetime
+#  updated_at :datetime
 #
 
 require 'spec_helper'

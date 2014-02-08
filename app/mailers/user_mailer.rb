@@ -1,8 +1,8 @@
 class UserMailer < ActionMailer::Base
-  default from: "no-reply@charity-map.org"
+  default from: "Charity Map <team@charity-map.org>"
 
   def send_auth_token(user)
     @user = user
-    mail(to: @user.email, subject: "Your Authentication Token At Chaity-Map.Org")
+    mail(to: @user.email, subject: "Thông tin tài khỏan của bạn tại charity-map.org")
   end
 end
