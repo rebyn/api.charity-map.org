@@ -2,7 +2,7 @@ if !@unprocessed_credits && !@cleared_credits
 	json.message "There were no credits of this user"
 else
 	json.UNPROCESSED @unprocessed_credits do |credit|
-		json.uuid credit.uid
+		json.uid credit.uid
         json.amount credit.amount
         json.currency credit.currency
         json.merchant credit.merchant do |m|
@@ -12,7 +12,7 @@ else
         end
     end
     json.CLEARED @cleared_credits do |credit|
-        json.uuid credit.uid
+        json.uid credit.uid
         json.amount credit.amount
         json.currency credit.currency
         json.merchant credit.merchant do |m|

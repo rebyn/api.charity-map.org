@@ -2,6 +2,7 @@ module V1
   class TransactionsController < ApplicationController
     before_action :auth_using_token
     include TransactionsHelper
+    skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
     # DOC: https://github.com/rebyn/api.charity-map.org/blob/master/docs/transactions.md#get-transactions
     def index

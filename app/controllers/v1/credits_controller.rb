@@ -1,6 +1,7 @@
 module V1
   class CreditsController < ApplicationController
-    before_action :auth_using_token
+  	before_action :auth_using_token
+    skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
   	def index
   		if (!request.post? && !request.put?)
@@ -29,11 +30,7 @@ module V1
       if params[:master_transaction_id]
         @credits = Credit.where("status = ? AND master_transaction_id = ?", "UNPROCESSED", params[:master_transaction_id])
         respond_to do |format|
-          if @credits
-            format.json {render(template: "v1/credits/index", status: 200)}
-          else
-            render json: {error: "No associated credits"}, status: 400
-          end
+          format.json {render(template: "v1/credits/index", status: 200)}
         end
       else
         render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
@@ -44,11 +41,7 @@ module V1
       if params[:master_transaction_id]
         @credits = Credit.where("status = ? AND master_transaction_id = ?", "CLEARED", params[:master_transaction_id])
         respond_to do |format|
-          if @credits
-            format.json {render(template: "v1/credits/index", status: 200)}
-          else
-            render json: {error: "No associated credits"}, status: 400
-          end
+          format.json {render(template: "v1/credits/index", status: 200)}
         end
       else
         render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
@@ -59,11 +52,7 @@ module V1
       if params[:master_transaction_id]
         @credits = Credit.joins(:user).where("credits.status = ? AND credits.master_transaction_id = ? AND users.category = ?", "UNPROCESSED", params[:master_transaction_id], "SOCIALORG")
         respond_to do |format|
-          if @credits
-            format.json {render(template: "v1/credits/index", status: 200)}
-          else
-            render json: {error: "No associated credits"}, status: 400
-          end
+          format.json {render(template: "v1/credits/index", status: 200)}
         end
       else
         render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
