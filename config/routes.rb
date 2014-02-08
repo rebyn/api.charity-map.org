@@ -12,6 +12,7 @@ CharitIo::Application.routes.draw do
     resources :credits do
       get 'unprocessed/:master_transaction_id', to: 'credits#unprocessed', on: :collection
       get 'cleared/:master_transaction_id', to: 'credits#cleared', on: :collection
+      get 'pending_clearance/:master_transaction_id', to: 'credits#pending_clearance', on: :collection
     end
   end
   # The priority is based upon order of creation: first created -> highest priority.

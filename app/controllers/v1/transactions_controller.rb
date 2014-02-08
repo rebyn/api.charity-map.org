@@ -1,6 +1,6 @@
 module V1
   class TransactionsController < ApplicationController
-    before_filter :validate_application
+    before_action :auth_using_token
     include TransactionsHelper
 
     # DOC: https://github.com/rebyn/api.charity-map.org/blob/master/docs/transactions.md#get-transactions
@@ -24,7 +24,7 @@ module V1
           render json: { "error" => @valid_transaction }, status: 400
         else
           @transaction = create(params,
-            (params[:from] == @app[:email] ? 'Authorized' : 'NotAuthorized')
+            (params[:from] == @token.user.email ? 'Authorized' : 'NotAuthorized')
           )
           # UserMailer.ask_to_authorize_transaction(@transaction).deliver if !@transaction.authorized?
           # TODO: send email when creating an NotAuthorized transaction
@@ -78,9 +78,10 @@ module V1
         return @transaction
       end
 
-      def validate_application
-        true
-        @app = {:token => "ABCDEF", :email => "merchant@company.com"}
+      def auth_using_token
+        authenticate_or_request_with_http_token do |token, options|
+          @token = AuthToken.find_by(value: token)
+        end
       end
   end
 end

@@ -3,10 +3,10 @@ require 'spec_helper'
 describe V1::UsersController do
   describe "Action with Auth Token" do
 
-    before :each do
+    before :each do      
       request.env["HTTP_ACCEPT"] = 'application/json'
       request.env["HTTPS"] = 'on'
-      request.env["HTTP_AUTHORIZATION"] = "Token token=ABCabc"
+      request.env["HTTP_AUTHORIZATION"] = "Token token=ABCabc"      
     end
 
     describe "Create User" do
