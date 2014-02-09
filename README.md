@@ -26,9 +26,9 @@ To create a transaction (to transfer credit or to donate), it's the same deal ex
 
 ```shell
 curl -H 'Content-Type: application/json' \
-  -H 'User-Agent: YOUR_APP_TOKEN' \
-  -d '{ "from": "u1@gmail.com", "to": "u2@gmail.com", "amount": 100000, "extra": "Donation #93821243 on charity-map.org" }' \
-  https://api.charity-map.org/v1/transactions.json
+  -H 'Authorization: Token token=YOUR_APP_TOKEN' \
+  -d '{ "from": "u1@gmail.com", "to": "u2@gmail.com", "amount": 100000, "references": "Donation #93821243 on charity-map.org" }' \
+  https://api.charity-map.org/v1/transactions
 ```
 
 
@@ -37,14 +37,15 @@ Authorization
 
 `api.charity-map.org` authorizes transactions via email. However, in order to create transactions, you need to register your app and obtain an app token (default transaction status will be `NotAuthorized`, and users will have to authorize the transaction via their emails)
 
+
 Identify your app
 -----------------
 
-You must include a `User-Agent` header with the token of your application:
+You must include a `Authorization` header with the token of your application:
 
-    User-Agent: YOUR_APP_TOKEN
+    Authorization: Token token=YOUR_APP_TOKEN
 
-If you don't supply this header, you will get a `400 Bad Request` response.
+If you don't supply this header, you will get a `401 Access Denied` response.
 
 
 No XML, just JSON
@@ -70,11 +71,10 @@ API ready for use
 
 
 
-
-API libraries
+<!-- API libraries
 -------------
 
-* [charity_map](https://rubygems.org/gems/charity_map) - Ruby gem
+* [charity_map](https://rubygems.org/gems/charity_map) - Ruby gem -->
 
 Help us make it better
 ----------------------

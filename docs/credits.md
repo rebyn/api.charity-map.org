@@ -6,7 +6,7 @@ Get credits
 ------------
 
 ```shell
-curl -H 'User-Agent: YOUR_APP_TOKEN' https://api.charity-map.org/v1/credits.json?email=QUERIED_EMAIL
+curl -H 'Authorization: Token token=YOUR_APP_TOKEN' https://api.charity-map.org/v1/credits.json?email=QUERIED_EMAIL
 ```
 
 * `GET /credits.json` will return all active credits.

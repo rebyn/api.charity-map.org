@@ -7,7 +7,7 @@ module V1
         @user = User.new(email: params[:email], category: params[:category])
         if @user.save
           UserMailer.send_auth_token(@user).deliver
-          render json: { auth_token: @user.auth_token.value }, status: 200 
+          render json: { auth_token: @user.auth_token.value }, status: 201
         else
           render json: { error: @user.errors.full_messages.join(" ") }, status: 400
         end

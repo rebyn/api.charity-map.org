@@ -35,7 +35,7 @@ module V1
           @transaction.break_down = @break_down
           @transaction.save!
           respond_to do |format|
-            format.json {render(template: 'v1/transactions/create.json.jbuilder', status: 200)}
+            format.json {render(template: 'v1/transactions/create.json.jbuilder', status: 201)}
           end
         end
       end
