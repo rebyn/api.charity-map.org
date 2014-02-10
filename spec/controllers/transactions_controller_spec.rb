@@ -133,7 +133,7 @@ describe V1::TransactionsController do
         @before_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
         post :index, @params
         expect(response.body).to have_node(:from).with("cuong@individual.net")
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(201)
         expect(response.body).to have_node(:to).with("social@social.org")
         expect(response.body).to have_node(:amount).with(100000.0)
         expect(response.body).to have_node(:currency).with("VND")
@@ -157,7 +157,7 @@ describe V1::TransactionsController do
         @user.credits.create master_transaction_id: "1234567890", amount: 100000, currency: "VND"
         post :index, @params
         expect(response.body).to have_node(:to).with("social@org.org")
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(201)
         expect(response.body).to have_node(:status).with("NotAuthorized")
       end
 
@@ -173,7 +173,7 @@ describe V1::TransactionsController do
         @before_sum = Credit.where(master_transaction_id: "1234567890").sum(:amount)
         post :index, @params
         expect(response.body).to have_node(:from).with("cuong@individual.net")
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(201)
         expect(response.body).to have_node(:to).with("charity@gmail.com")
         expect(response.body).to have_node(:amount).with(125000.0)
         expect(response.body).to have_node(:currency).with("VND")
@@ -202,7 +202,7 @@ describe V1::TransactionsController do
         @before_sum = Credit.where(master_transaction_id: "1234567892").sum(:amount)
         post :index, @params
         expect(response.body).to have_node(:from).with("cuong@individual.net")
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(201)
         expect(response.body).to have_node(:to).with("charity@gmail.com")
         expect(response.body).to have_node(:amount).with(170000.0)
         expect(response.body).to have_node(:currency).with("VND")

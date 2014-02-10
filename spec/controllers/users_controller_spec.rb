@@ -3,18 +3,19 @@ require 'spec_helper'
 describe V1::UsersController do
   describe "Action with Auth Token" do
 
-    before :each do      
+    before :each do
+      @admin_token = ENV['API_CREATE_USER_TOKEN']
       request.env["HTTP_ACCEPT"] = 'application/json'
       request.env["HTTPS"] = 'on'
-      request.env["HTTP_AUTHORIZATION"] = "Token token=ABCabc"      
+      request.env["HTTP_AUTHORIZATION"] = "Token token=#{@admin_token}"      
     end
 
     describe "Create User" do
       it "should create a user and returning auth token" do
       	@params = {email: "merchant@company.com", category: "MERCHANT"}
         post :create, @params
-        ActionMailer::Base.deliveries.last.to.should == ["merchant@company.com"]
-        expect(response.status).to eq(200)
+        # ActionMailer::Base.deliveries.last.to.should == ["merchant@company.com"]
+        expect(response.status).to eq(201)
         expect(response.body).to have_node(:auth_token)
       end
 
