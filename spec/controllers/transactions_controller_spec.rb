@@ -57,8 +57,8 @@ describe V1::TransactionsController do
         user = FactoryGirl.create(:user)
         get :index, {email: "merchant@company.com"}
         expect(response.body).to eq(
-          {:"message" => "Transactions Not Found"}.to_json)
-        expect(response.status).to eq(200)
+          {:"error" => "Transactions Not Found"}.to_json)
+        expect(response.status).to eq(400)
       end
 
       it "returns User with transactions" do
@@ -66,8 +66,8 @@ describe V1::TransactionsController do
         transaction = FactoryGirl.create(:transaction)
         get :index, {email: "merchant@company.com"}
         expect(response.body).to eq(
-          {:"message" => "Transactions Not Found"}.to_json)
-        expect(response.status).to eq(200)
+          {:"error" => "Transactions Not Found"}.to_json)
+        expect(response.status).to eq(400)
       end
 
       it "returns User with transactions" do

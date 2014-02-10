@@ -10,8 +10,10 @@ module V1
         @user = User.find_by_email(params[:email])
         if params[:email] && @user
           @transactions = Transaction.where(sender_email: params[:email]).authorized
-          respond_to do |format|
-            format.json {render}
+          if @transactions.empty?
+            render json: { error: "Transactions Not Found" }, status: 400
+          else
+            respond_to {|format| format.json {render}}
           end
         else
           render json: (params[:email] ? {error: "Email not found"} : {error: "Missing required params[:email]"}), status: 400
