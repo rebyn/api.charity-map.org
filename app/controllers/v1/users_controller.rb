@@ -16,6 +16,15 @@ module V1
       end
     end
 
+    def balance
+      if params[:email] && (@user = User.find_by(email: params[:email]))
+        @balance = @user.credits.unprocessed.sum(:amount)
+        render json: {balance: @balance}, status: 200
+      else
+        render json: { error: "Missing required params[:email]" }, status: 400
+      end
+    end
+
     protected
       def authenticate
         authenticate_or_request_with_http_token do |token, options|

@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe V1::UsersController do
   describe "Action with Auth Token" do
-
     before :each do
       @admin_token = ENV['API_CREATE_USER_TOKEN']
       request.env["HTTP_ACCEPT"] = 'application/json'
@@ -32,6 +31,25 @@ describe V1::UsersController do
         expect(response.status).to eq(400)
         expect(response.body).to eq({:"error" => "Email is invalid"}.to_json)
       end
+    end
+
+    it "should get balance" do
+      # Missing params[:email]
+      get :balance
+      expect(response.body).to eq({:"error" => "Missing required params[:email]"}.to_json)
+      # User doesn't exist
+      get :balance, {email: "cuong@individual.net"}
+      expect(response.body).to eq({:"error" => "Missing required params[:email]"}.to_json)
+      @user = User.create! email: "cuong@individual.net"
+      # User to have no credits
+      get :balance, {email: @user.email}
+      expect(response.body).to eq({:"balance" => 0.0}.to_json)
+      # User to have a positive credit balance
+      @transaction = FactoryGirl.create(:transaction)
+      @user.credits.create! master_transaction_id: @transaction.uid, amount: 100000, currency: "VND"
+      get :balance, {email: @user.email}
+      expect(response.body).to eq({:"balance" => 100000.0}.to_json)
+      expect(response.status).to eq(200)
     end
   end
 
