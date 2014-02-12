@@ -22,7 +22,7 @@ class Transaction < ActiveRecord::Base
   scope :authorized, -> { where(status: "Authorized") }
   scope :unauthorized, -> { where(status: "NotAuthorized") }
   attr_accessible :id, :uid, :sender_email, :recipient_email,
-    :amount, :expiry_date, :currency, :reference
+    :amount, :expiry_date, :currency, :references
 
   before_validation :generate_uid, :unless => :uid?
   after_create :generate_token
