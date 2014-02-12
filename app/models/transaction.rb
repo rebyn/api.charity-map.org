@@ -17,9 +17,10 @@
 #
 
 class Transaction < ActiveRecord::Base
-  BASE_URI = "https://api.charity-map.org"
+  BASE_URI = "https://api.charity-map.org/v1"
 
   scope :authorized, -> { where(status: "Authorized") }
+  scope :unauthorized, -> { where(status: "NotAuthorized") }
   attr_accessible :id, :uid, :sender_email, :recipient_email,
     :amount, :expiry_date, :currency, :reference
 
@@ -29,6 +30,7 @@ class Transaction < ActiveRecord::Base
   validates :uid, :sender_email, :recipient_email,
     :amount, :status, :currency, presence: true
   validates :amount, :numericality => true
+  validates :uid, uniqueness: true
 
   has_one :token
   has_many :credits
@@ -39,11 +41,8 @@ class Transaction < ActiveRecord::Base
   end
 
   def authorized?
-    return true if self.status == 'Authorized'
-    false
+    status == 'Authorized'
   end
-
-  private
 
   def sender
     User.find_by_email(self.sender_email)
@@ -52,6 +51,8 @@ class Transaction < ActiveRecord::Base
   def recipient
     User.find_by_email(self.recipient_email)
   end
+
+  private
 
   def generate_uid
     self.uid = loop do

@@ -7,14 +7,13 @@
 #  category   :string(255)
 #  created_at :datetime
 #  updated_at :datetime
-#  name       :string(255)
-#  contact    :string(255)
 #
 
 class User < ActiveRecord::Base
   attr_accessible :email, :name, :contact, :category
   validates :email, :category, presence: true
   validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+  validates :email, uniqueness: true
   validate :user_to_belong_to_a_category
   has_defaults category: "INDIVIDUAL"
 
@@ -30,6 +29,10 @@ class User < ActiveRecord::Base
 
   def is?(cat)
     self.category == cat ? true : false
+  end
+
+  def transactions
+    Transaction.where(sender_email: email)
   end
 
   def generate_auth_token

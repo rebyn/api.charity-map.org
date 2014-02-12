@@ -43,7 +43,7 @@ class Credit < ActiveRecord::Base
 
   def merchant
     @transaction = Transaction.find_by_uid(self.master_transaction_id)
-    @merchant = User.where("email = ?", @transaction.sender_email)
+    @merchant = User.find_by(email: @transaction.sender_email)
     return @merchant
   end
 end

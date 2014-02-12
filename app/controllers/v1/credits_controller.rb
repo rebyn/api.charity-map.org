@@ -4,60 +4,25 @@ module V1
     skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
   	def index
-  		if (!request.post? && !request.put?)
-  			@user = User.find_by_email(params[:email])			
-  			if params[:email] && @user
-          case @user.category
-          when "INDIVIDUAL"
-          	@credits = @user.credits
-          	@template = 'v1/credits/individual_credits.json.jbuilder'
-          when "SOCIALORG"
-          	@unprocessed_credits = @user.credits.where("status = ?", "UNPROCESSED")
-          	@cleared_credits = @user.credits.where("status = ?", "CLEARED")
-          	@template = 'v1/credits/socialorg_credits.json.jbuilder'         	
-          end
+      if !params[:master_transaction_id].blank? || !params[:email].blank?
 
-          respond_to do |format|
-            format.json {render(template: @template, status: 200)}
-          end
+        if !params[:email].blank? && @user = User.find_by_email(params[:email])
+          @credits = @user.credits
+        elsif !params[:master_transaction_id].blank?
+          @credits = Credit.where(master_transaction_id: params[:master_transaction_id])
+        end
+
+        @credits = @credits.where(status: params[:status].capitalize) if !@credits.empty? && !params[:status].blank?
+
+        if @credits && @credits.empty?
+          render json: { error: "No associated credits"}, status: 400
         else
-          render json: (params[:email] ? {error: "Email not found"} : {error: "Missing required params[:email]"}), status: 400
+          respond_to {|format| format.json {render(template: "v1/credits/index", status: 200)}}
         end
-  		end
+      else
+        render json: {error: "Missing required params[:email] or params[:master_transaction_id]"}, status: 400
+      end
   	end
-
-    def unprocessed      
-      if params[:master_transaction_id]
-        @credits = Credit.where("status = ? AND master_transaction_id = ?", "UNPROCESSED", params[:master_transaction_id])
-        respond_to do |format|
-          format.json {render(template: "v1/credits/index", status: 200)}
-        end
-      else
-        render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
-      end
-    end
-
-    def cleared
-      if params[:master_transaction_id]
-        @credits = Credit.where("status = ? AND master_transaction_id = ?", "CLEARED", params[:master_transaction_id])
-        respond_to do |format|
-          format.json {render(template: "v1/credits/index", status: 200)}
-        end
-      else
-        render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
-      end
-    end
-
-    def pending_clearance
-      if params[:master_transaction_id]
-        @credits = Credit.joins(:user).where("credits.status = ? AND credits.master_transaction_id = ? AND users.category = ?", "UNPROCESSED", params[:master_transaction_id], "SOCIALORG")
-        respond_to do |format|
-          format.json {render(template: "v1/credits/index", status: 200)}
-        end
-      else
-        render json: {error: "Missing required params[:master_transaction_id]"}, status: 400
-      end
-    end
   	
     # def show
   	# 	@user = User.find_by_email(@app.email)

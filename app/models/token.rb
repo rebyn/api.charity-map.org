@@ -13,9 +13,7 @@
 
 class Token < ActiveRecord::Base
   attr_accessible :value, :transaction_id, :expiry_date, :status
-
   before_validation :generate_value, :unless => :value?
-
   validates :value, :transaction_id, :expiry_date, :status, presence: true  
 
   belongs_to :transaction

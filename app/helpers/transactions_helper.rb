@@ -13,12 +13,12 @@ module TransactionsHelper
     end
     return message.join(" ")
   end
-  
+
   def credit_transfer(sender, recipient, transaction)
     @break_down, @sender, @recipient, @transaction = {}, sender, recipient, transaction
     if @sender.is?("MERCHANT")
-      @recipient.credits.create(master_transaction_id: @transaction.uid, amount: @transaction.amount, currency: @transaction.currency)            
-      @break_down.push({ @transaction.uid.to_sym => @transaction.amount })
+      @recipient.credits.create!(master_transaction_id: @transaction.uid, amount: @transaction.amount, currency: @transaction.currency)
+      @break_down[@transaction.uid.to_sym] = @transaction.amount
     else
       # MUST NOT REMOVE "!" in below code lines
       @temp_amount = transaction.amount.to_f
@@ -42,5 +42,14 @@ module TransactionsHelper
       end
     end
     return @break_down
+  end
+
+  def post_authorize_transaction_job(transaction)
+    @transaction = transaction
+    if @transaction.authorized?
+      @break_down = credit_transfer(@transaction.sender, @transaction.recipient, @transaction)
+      @transaction.break_down = @break_down
+      @transaction.save!
+    end
   end
 end

@@ -32,10 +32,8 @@ module V1
           # UserMailer.ask_to_authorize_transaction(@transaction).deliver if !@transaction.authorized?
           # TODO: send email when creating an NotAuthorized transaction
           # TODO: after authorizing, transfer credits
-          # TODO: if @transaction.status == "Authorized"          
-          @break_down = credit_transfer(@sender, @recipient, @transaction)
-          @transaction.break_down = @break_down
-          @transaction.save!
+          # TODO: if @transaction.status == "Authorized"
+          post_authorize_transaction_job(@transaction) if @transaction.authorized?
           respond_to do |format|
             format.json {render(template: 'v1/transactions/create.json.jbuilder', status: 201)}
           end
@@ -44,15 +42,16 @@ module V1
     end
 
     def authorize
-      token_value = params[:token]
-      transaction_id = params[:transaction_id]
-      transaction = Transaction.find(transaction_id)
-      if transaction
-        token = Token.where("transaction_id = ? AND expiry_date >= ? AND status = ?", transaction.uid, DateTime.now, "new").first
-        if token
-          transaction.update_attributes(status: 'authorized')
-          token.update_attributes(status: 'used')
+      if params[:token] && (@token = Token.find_by(value: params[:token]))
+        if @token.status == 'NEW' && !@token.transaction.authorized?
+          @transaction = @token.transaction
+          @token.update_attribute :status, 'USED'
+          @transaction.update_attribute :status, 'Authorized'
+          post_authorize_transaction_job(@transaction) if @transaction.authorized?
+          render json: {status: @transaction.status}, status: 200
         end
+      else
+        render json: {error: "Token not found"}, status: 400
       end
     end
 
