@@ -51,6 +51,41 @@ describe V1::UsersController do
       expect(response.body).to eq({:"balance" => 100000.0}.to_json)
       expect(response.status).to eq(200)
     end
+
+    it "should get user info" do
+      get :show
+      expect(response.body).to eq({:"error" => "Missing required params[:email]"}.to_json)
+      expect(response.status).to eq(400)
+      get :show, {email: "cuong@individual.net"}
+      expect(response.body).to eq({:"error" => "User Not Found"}.to_json)
+      expect(response.status).to eq(400)
+      @user = User.create! email: "cuong@individual.net"
+      get :show, {email: "cuong@individual.net"}
+      expect(response.body).to have_node(:email).with("cuong@individual.net")
+      expect(response.body).to have_node(:auth_token)
+      expect(response.body).to have_node(:category).with("INDIVIDUAL")
+      @user.update_attribute :category, "MERCHANT"
+      get :show, {email: "cuong@individual.net"}
+      expect(response.body).to have_node(:category).with("MERCHANT")
+    end
+
+    it "should update user info" do
+      post :update
+      expect(response.body).to eq({:"error" => "Missing required params[:email]"}.to_json)
+      expect(response.status).to eq(400)
+      post :update, {email: "cuong@individual.net"}
+      expect(response.body).to eq({:"error" => "User Not Found"}.to_json)
+      expect(response.status).to eq(400)
+      @user = User.create! email: "cuong@individual.net"
+      post :update, {email: "cuong@individual.net"}
+      expect(response.body).to have_node(:email).with("cuong@individual.net")
+      expect(response.body).to have_node(:auth_token)
+      expect(response.body).to have_node(:category).with("INDIVIDUAL")
+      post :update, {email: "cuong@individual.net", category: "MERCHANT"}
+      expect(response.body).to have_node(:category).with("MERCHANT")
+      post :update, {email: "cuong@individual.net", category: "SOCIALORG"}
+      expect(response.body).to have_node(:category).with("SOCIALORG")
+    end
   end
 
   describe "Check Auth Token" do

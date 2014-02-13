@@ -16,6 +16,33 @@ module V1
       end
     end
 
+    def show
+      if params[:email]
+        if (@user = User.find_by_email(params[:email]))
+          respond_to {|format| format.json {render(template: 'v1/users/show.json.jbuilder',
+            status: 200)}}
+        else
+          render json: { error: "User Not Found" }, status: 400
+        end
+      else
+        render json: { error: "Missing required params[:email]" }, status: 400
+      end
+    end
+
+    def update
+      if params[:email]
+        if (@user = User.find_by_email(params[:email]))
+          @user.update_attribute :category, params[:category] if params[:category]
+          respond_to {|format| format.json {render(template: 'v1/users/show.json.jbuilder',
+            status: 200)}}
+        else
+          render json: { error: "User Not Found" }, status: 400
+        end
+      else
+        render json: { error: "Missing required params[:email]" }, status: 400
+      end
+    end
+
     def balance
       if params[:email] && (@user = User.find_by(email: params[:email]))
         @balance = @user.credits.unprocessed.sum(:amount)

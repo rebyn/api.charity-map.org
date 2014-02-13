@@ -9,6 +9,8 @@ CharitIo::Application.routes.draw do
 
     post 'users/create'
     get 'users/balance'
+    get 'users/show'
+    post 'users/update'
 
     resources :credits do
       get ':status/:master_transaction_id', to: 'credits#index', on: :collection
