@@ -18,6 +18,7 @@ gem 'awesome_print', :require => 'ap'
 gem 'delayed_job_active_record'
 gem 'rails_12factor', group: :production
 gem 'babosa'
+gem 'newrelic_rpm'
 
 group :development do
   gem 'better_errors'
