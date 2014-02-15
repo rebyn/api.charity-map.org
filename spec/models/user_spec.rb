@@ -12,5 +12,9 @@
 require 'spec_helper'
 
 describe User do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "should not allow duplicate accounts" do
+    user = FactoryGirl.create(:user)
+    another_user = User.create email: user.email
+    another_user.should_not be_valid
+  end
 end
