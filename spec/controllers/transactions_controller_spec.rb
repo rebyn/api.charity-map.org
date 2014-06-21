@@ -157,6 +157,12 @@ describe V1::TransactionsController do
         Credit.count.should eq(6)
         @org.credits.pluck(:master_transaction_id).should eq(@app.transactions.pluck(:uid))
       end
+
+      it "should create user if to[email] isn't on the system" do
+        @params = {from: "merchant@company.com", to: "non_existent_user@individual.net", amount: 100000, currency: "VND"}
+        post :index, @params
+        expect(User.where(email: "non_existent_user@individual.net")).to exist
+      end
     end
   end
 end
