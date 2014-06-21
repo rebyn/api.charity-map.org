@@ -3,7 +3,7 @@ module TransactionsHelper
     message = []
     message.push("Required params[:currency].") if !params[:currency]
     message.push("Sender Email Not Found.") if !sender
-    message.push("Recipient Email Not Found.") if !recipient
+    message.push("Recipient Email Invalid.")  if !recipient && !(@user = User.create(email: params[:to]))
     if sender && !sender.is?("MERCHANT") && sender.credits.unprocessed.sum(:amount) < params[:amount].to_f
       message.push("Not Having Enough Credit To Perform The Transaction.")
     elsif sender && recipient
