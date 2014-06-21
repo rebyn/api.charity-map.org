@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
+ruby '2.1.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.2'
+gem 'rails', '4.0.5'
 gem 'unicorn'
 # gem 'rails-api'
 
@@ -59,7 +60,7 @@ gem 'haml-rails'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
-gem 'debugger'
+# gem 'debugger'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
