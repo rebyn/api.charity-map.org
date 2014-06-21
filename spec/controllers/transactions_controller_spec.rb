@@ -81,7 +81,7 @@ describe V1::TransactionsController do
         @params = {from: "unregistered_merchant@company.com", to: "cuong@individual.net", amount: 100000, currency: "VND"}
         post :index, @params
         expect(response.body).to eq(
-          {:"error" => "Sender Email Not Found. Recipient Email Not Found."}.to_json)
+          {:"error" => "Sender Email Not Found."}.to_json)
         expect(response.status).to eq(400)
         # :from account doesn't have enough credit
         @params = {from: "cuong@individual.net", to: "love@social.org", amount: 100000, currency: "VND"}
