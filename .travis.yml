@@ -1,8 +1,0 @@
-before_script:
-  - cp config/database.yml.travis config/database.yml
-
-language: ruby
-rvm:
-  - 2.0.0
-addons:
-  postgresql: "9.3"

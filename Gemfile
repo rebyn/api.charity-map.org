@@ -41,6 +41,7 @@ group :test, :development do
   gem 'capybara'
   gem 'poltergeist'
   gem 'selenium-webdriver'
+  gem 'fakeweb'
 end
 
 # To use ActiveModel has_secure_password
