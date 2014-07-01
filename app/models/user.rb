@@ -17,10 +17,16 @@ class User < ActiveRecord::Base
   validate :user_to_belong_to_a_category
   has_defaults category: "INDIVIDUAL"
 
+  before_validation :sanitize_email_input
   after_create :generate_auth_token
 
   has_many :credits
   has_one :auth_token
+
+  def sanitize_email_input
+    sanitized = self.email.strip
+    self.email = sanitized
+  end
 
   def user_to_belong_to_a_category
     errors.add(:category, "has to be either Merchant, Individual or SocialOrg") if
