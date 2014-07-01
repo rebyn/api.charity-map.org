@@ -19,8 +19,8 @@ module V1
           render json: (params[:email] ? {error: "Email not found"} : {error: "Missing required params[:email]"}), status: 400
         end
       else # handle PUT/POST
-        @sender = User.find_by_email(params[:from])
-        @recipient = User.find_by_email(params[:to])
+        @sender = User.find_by_email(params[:from].strip)
+        @recipient = User.find_by_email(params[:to].strip)
         # TODO: send email when creating new User
         @valid_transaction = check_transaction_prerequisites(@sender, @recipient, params)
         if !@valid_transaction.blank?
