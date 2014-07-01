@@ -3,7 +3,7 @@ module TransactionsHelper
     message = []
     message.push("Required params[:currency].") if !params[:currency]
     message.push("Sender Email Not Found.") if !sender
-    message.push("Recipient Email Invalid.")  if !recipient && !(@user = User.create(email: params[:to]))
+    message.push("Recipient Email Invalid.")  if !recipient && !(recipient = User.create(email: params[:to]))
     if sender && !sender.is?("MERCHANT") && sender.credits.unprocessed.sum(:amount) < params[:amount].to_f
       message.push("Not Having Enough Credit To Perform The Transaction.")
     elsif sender && recipient
@@ -16,28 +16,30 @@ module TransactionsHelper
 
   def credit_transfer(sender, recipient, transaction)
     @break_down, @sender, @recipient, @transaction = {}, sender, recipient, transaction
-    if @sender.is?("MERCHANT")
-      @recipient.credits.create!(master_transaction_id: @transaction.uid, amount: @transaction.amount, currency: @transaction.currency)
-      @break_down[@transaction.uid.to_sym] = @transaction.amount
-    else
-      # MUST NOT REMOVE "!" in below code lines
-      @temp_amount = transaction.amount.to_f
-      @sender.credits.each do |credit|
-        if credit.amount < @temp_amount
-          @temp_amount = @temp_amount - credit.amount
-          @created_credit = @recipient.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
-          credit.update_attributes!(amount: 0)
-          @break_down[credit.master_transaction_id.to_sym] = credit.amount
-        elsif credit.amount > @temp_amount
-          @created_credit = @recipient.credits.create!(master_transaction_id: credit.master_transaction_id, amount: @temp_amount, currency: transaction.currency)
-          credit.update_attributes!(amount: credit.amount - @temp_amount)
-          @break_down[credit.master_transaction_id.to_sym] = @temp_amount
-          break
-        else
-          @created_credit = @recipient.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
-          credit.update_attributes!(amount: 0)
-          @break_down[credit.master_transaction_id.to_sym] = credit.amount
-          break
+    Credit.transaction do
+      if @sender.is?("MERCHANT")
+        @recipient.credits.create!(master_transaction_id: @transaction.uid, amount: @transaction.amount, currency: @transaction.currency)
+        @break_down[@transaction.uid.to_sym] = @transaction.amount
+      else
+        # MUST NOT REMOVE "!" in below code lines
+        @temp_amount = transaction.amount.to_f
+        @sender.credits.each do |credit|
+          if credit.amount < @temp_amount
+            @temp_amount = @temp_amount - credit.amount
+            @created_credit = @recipient.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
+            credit.update_attributes!(amount: 0)
+            @break_down[credit.master_transaction_id.to_sym] = credit.amount
+          elsif credit.amount > @temp_amount
+            @created_credit = @recipient.credits.create!(master_transaction_id: credit.master_transaction_id, amount: @temp_amount, currency: transaction.currency)
+            credit.update_attributes!(amount: credit.amount - @temp_amount)
+            @break_down[credit.master_transaction_id.to_sym] = @temp_amount
+            break
+          else
+            @created_credit = @recipient.credits.create!(master_transaction_id: credit.master_transaction_id, amount: credit.amount, currency: transaction.currency)
+            credit.update_attributes!(amount: 0)
+            @break_down[credit.master_transaction_id.to_sym] = credit.amount
+            break
+          end
         end
       end
     end
