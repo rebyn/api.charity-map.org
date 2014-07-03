@@ -10,6 +10,9 @@ module TransactionsHelper
       if recipient.is?("MERCHANT") || (!sender.is?("MERCHANT") && recipient.is?("INDIVIDUAL"))
         message.push("Credits Restricted To Be Sent Only to Organizational Accounts.")
       end
+      if sender.is?("SOCIALORG")
+        message.push("Credits Restricted To Be Sent Only from Merchant or Individual Accounts.")
+      end
     end
     return message.join(" ")
   end
