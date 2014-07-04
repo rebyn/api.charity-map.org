@@ -1,0 +1,9 @@
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: staging-charitio
+  production:
+    branch: master
+    heroku:
+      appname: charitio
