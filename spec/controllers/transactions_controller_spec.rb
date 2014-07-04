@@ -87,6 +87,7 @@ describe V1::TransactionsController do
         @params = {from: "cuong@individual.net", to: "love@social.org", amount: 100000, currency: "VND"}
         @user2 = User.create email: "cuong@individual.net"
         @user3 = User.create email: "love@social.org"
+        @user3.update_attribute(:category, "SOCIALORG")
         post :index, @params
         expect(response.body).to eq(
           {:"error" => "Not Having Enough Credit To Perform The Transaction."}.to_json)
@@ -97,6 +98,14 @@ describe V1::TransactionsController do
         post :index, @params
         expect(response.body).to eq(
           {:"error" => "Credits Restricted To Be Sent Only to Organizational Accounts."}.to_json)
+        # Quick hack to test sending credit from SOCIALORG to SOCIALORG, will refactor TODO
+        @params = {from: "cuong@individual.net", to: "love@social.org", amount: 100000, currency: "VND"}
+        post :index, @params
+        expect(JSON.parse(response.body)["status"]).to eq("NotAuthorized")
+        @params = {from: "love@social.org", to: "love@social.org", amount: 100000, currency: "VND"}
+        post :index, @params
+        expect(response.body).to eq(
+          {:"error" => "Credits Restricted Not To Be Sent From A Social Organization Account."}.to_json)
       end
     end
 
