@@ -14,8 +14,8 @@
 
 FactoryGirl.define do
   factory :auth_token do
-    value "MyString"
-    status "MyString"
+    value 'MyString'
+    status 'MyString'
     user nil
   end
 end

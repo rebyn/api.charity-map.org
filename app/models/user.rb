@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
   validates :email, uniqueness: true
   validate :user_to_belong_to_a_category
-  has_defaults category: "INDIVIDUAL"
+  has_defaults category: 'INDIVIDUAL'
 
   before_validation :sanitize_email_input
   after_create :generate_auth_token
@@ -24,17 +24,17 @@ class User < ActiveRecord::Base
   has_one :auth_token
 
   def sanitize_email_input
-    sanitized = self.email.strip
+    sanitized = email.strip
     self.email = sanitized
   end
 
   def user_to_belong_to_a_category
-    errors.add(:category, "has to be either Merchant, Individual or SocialOrg") if
-      ["MERCHANT", "INDIVIDUAL", "SOCIALORG"].index(category) == nil
+    errors.add(:category, 'has to be either Merchant, Individual or SocialOrg') if
+      %w(MERCHANT INDIVIDUAL SOCIALORG).index(category).nil?
   end
 
   def is?(cat)
-    self.category == cat ? true : false
+    category == cat ? true : false
   end
 
   def transactions
@@ -42,6 +42,6 @@ class User < ActiveRecord::Base
   end
 
   def generate_auth_token
-    self.create_auth_token if !self.auth_token
+    create_auth_token unless auth_token
   end
 end

@@ -12,7 +12,7 @@
 require 'spec_helper'
 
 describe User do
-  it "should not allow duplicate accounts" do
+  it 'should not allow duplicate accounts' do
     user = FactoryGirl.create(:user)
     another_user = User.create email: user.email
     another_user.should_not be_valid

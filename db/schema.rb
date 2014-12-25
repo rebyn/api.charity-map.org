@@ -11,63 +11,63 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140212101135) do
+ActiveRecord::Schema.define(version: 20_140_212_101_135) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-  enable_extension "hstore"
+  enable_extension 'plpgsql'
+  enable_extension 'hstore'
 
-  create_table "auth_tokens", force: true do |t|
-    t.string   "value"
-    t.string   "status"
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table 'auth_tokens', force: true do |t|
+    t.string 'value'
+    t.string 'status'
+    t.integer 'user_id'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
   end
 
-  add_index "auth_tokens", ["user_id"], name: "index_auth_tokens_on_user_id", using: :btree
+  add_index 'auth_tokens', ['user_id'], name: 'index_auth_tokens_on_user_id', using: :btree
 
-  create_table "credits", force: true do |t|
-    t.string   "master_transaction_id"
-    t.float    "amount"
-    t.integer  "user_id"
-    t.string   "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "uid"
-    t.string   "currency"
+  create_table 'credits', force: true do |t|
+    t.string 'master_transaction_id'
+    t.float 'amount'
+    t.integer 'user_id'
+    t.string 'status'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+    t.string 'uid'
+    t.string 'currency'
   end
 
-  add_index "credits", ["user_id"], name: "index_credits_on_user_id", using: :btree
+  add_index 'credits', ['user_id'], name: 'index_credits_on_user_id', using: :btree
 
-  create_table "tokens", force: true do |t|
-    t.string   "value"
-    t.string   "transaction_id"
-    t.datetime "expiry_date"
-    t.string   "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table 'tokens', force: true do |t|
+    t.string 'value'
+    t.string 'transaction_id'
+    t.datetime 'expiry_date'
+    t.string 'status'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
   end
 
-  create_table "transactions", force: true do |t|
-    t.string   "uid"
-    t.float    "amount"
-    t.string   "status"
-    t.datetime "expiry_date"
-    t.string   "sender_email"
-    t.string   "recipient_email"
-    t.string   "currency"
-    t.text     "references"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.hstore   "break_down"
+  create_table 'transactions', force: true do |t|
+    t.string 'uid'
+    t.float 'amount'
+    t.string 'status'
+    t.datetime 'expiry_date'
+    t.string 'sender_email'
+    t.string 'recipient_email'
+    t.string 'currency'
+    t.text 'references'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+    t.hstore 'break_down'
   end
 
-  create_table "users", force: true do |t|
-    t.string   "email"
-    t.string   "category"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table 'users', force: true do |t|
+    t.string 'email'
+    t.string 'category'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
   end
 
 end

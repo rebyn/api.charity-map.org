@@ -6,6 +6,6 @@ json.array! @transactions do |transaction|
   json.currency transaction.currency
   json.references transaction.references
   json.status transaction.status
-  json.(transaction, :created_at)
+  json.call(transaction, :created_at)
   json.url transaction.url
 end

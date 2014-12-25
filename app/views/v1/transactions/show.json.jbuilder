@@ -8,6 +8,6 @@ unless @transactions.empty?
     json.references transaction.references
     json.status transaction.status
     json.break_down transaction.break_down
-    json.(transaction, :created_at)
+    json.call(transaction, :created_at)
   end
 end

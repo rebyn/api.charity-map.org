@@ -1,11 +1,11 @@
 CharitIo::Application.routes.draw do
-  namespace :v1, defaults: {format: :json} do
+  namespace :v1, defaults: { format: :json } do
     match 'transactions', to: 'transactions#index', via: :all
     get 'transactions/index'
     post 'transactions/index'
     get 'transactions/authorize'
     get 'transactions/show'
-    get 'transactions/:uid', to: 'transactions#show'    
+    get 'transactions/:uid', to: 'transactions#show'
 
     post 'users/create'
     get 'users/balance'
@@ -20,7 +20,7 @@ CharitIo::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  get  'pages/home', defaults: {format: :json}
+  get 'pages/home', defaults: { format: :json }
   root 'pages#home'
 
   # Example of regular route:

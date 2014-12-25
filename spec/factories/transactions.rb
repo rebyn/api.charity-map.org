@@ -20,12 +20,12 @@
 
 FactoryGirl.define do
   factory :transaction do
-    amount 100000
-    created_at "2014-01-08 22:16:54"
-    updated_at "2014-01-08 22:16:54"
-    sender_email "merchant@company.com"
-    recipient_email "cuong@individual.net"
-    currency "VND"
-    break_down { {"1234567890" => 100000} }
+    amount 100_000
+    created_at '2014-01-08 22:16:54'
+    updated_at '2014-01-08 22:16:54'
+    sender_email 'merchant@company.com'
+    recipient_email 'cuong@individual.net'
+    currency 'VND'
+    break_down { { '1234567890' => 100_000 } }
   end
 end

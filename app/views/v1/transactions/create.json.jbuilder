@@ -4,6 +4,6 @@ json.to @transaction.recipient_email
 json.amount @transaction.amount
 json.currency @transaction.currency
 json.references @transaction.references
-json.(@transaction, :created_at)
+json.call(@transaction, :created_at)
 json.url @transaction.url
 json.status @transaction.status

@@ -11,13 +11,14 @@
 #
 
 class AuthToken < ActiveRecord::Base
-	attr_accessible :value, :user_id, :status
-	before_validation :generate_value, on: :create
-	validates :value, :user_id, :status, presence: true
-	has_defaults status: "ACTIVE"
+  attr_accessible :value, :user_id, :status
+  before_validation :generate_value, on: :create
+  validates :value, :user_id, :status, presence: true
+  has_defaults status: 'ACTIVE'
   belongs_to :user
 
   private
+
   def generate_value
     self.value = loop do
       random_value = SecureRandom.urlsafe_base64(nil, false)

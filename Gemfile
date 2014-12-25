@@ -15,7 +15,7 @@ gem 'groupdate'
 gem 'has_defaults'
 gem 'activerecord-postgres-hstore'
 gem 'protected_attributes'
-gem 'awesome_print', :require => 'ap'
+gem 'awesome_print', require: 'ap'
 gem 'delayed_job_active_record'
 gem 'rails_12factor', group: :production
 gem 'babosa'
@@ -32,7 +32,7 @@ end
 group :test, :development do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
-  gem 'database_cleaner' 
+  gem 'database_cleaner'
   gem 'launchy'
   gem 'timecop'
   gem 'api_matchers'
