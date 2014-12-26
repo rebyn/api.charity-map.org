@@ -8,7 +8,7 @@ Register your app
 
 Most of the transactions on `api.charity-map.org` are credit transfers between merchants, individuals and charities. If you're a merchant (we define `merchant` as an entity that sends out credit to individuals, i.e: a company that gives gift card, or compensates its users for their work like filling a survey, or sends credit to employees in their annual charity program), you need to register (to us) your usage and obtain a token.
 
-Register your app and obtain a token at [https://api.charity-map.org/apps](https://api.charity-map.org/apps)
+Register your app and obtain a token <strike>at [https://api.charity-map.org/apps](https://api.charity-map.org/apps)</strike> with [Tu Hoang](mailto:tu@charity-map.org) (Sorry for this inconvenience and not-so-automated process. We're limiting beta entries to partners only).
 
 
 Making a request
